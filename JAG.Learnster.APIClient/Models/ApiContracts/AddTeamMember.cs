@@ -29,12 +29,12 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Members
         /// </summary>
         [JsonPropertyName("members")]
-        public List<VendorUsersVendorStudentSerializer> Members { get; set; }
+        public List<VendorStudents> Members { get; set; }
 
         /// <summary>
         /// Gets or Sets Managers
         /// </summary>
         [JsonPropertyName("managers")]
-        public List<VendorUsersVendorStudentSerializer> Managers { get; set; }
+        public List<VendorStudents> Managers { get; set; }
     }
 }
