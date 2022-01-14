@@ -19,7 +19,7 @@ namespace JAG.Learnster.APIClient.Clients
 		private readonly LearnsterOptions _learnsterOptions;
 		private readonly ILogger<AuthClient> _logger;
 
-		private static LearnsterToken _token;
+		private static LearnsterToken _cachedToken;
 		
 		private static readonly AutoResetEvent AutoResetEvent = new AutoResetEvent(true);
 		private const int EventTimeout = 5 * 60 * 1000; // 5 minutes
@@ -92,7 +92,7 @@ namespace JAG.Learnster.APIClient.Clients
 				{
 					var getTokenTime = DateTime.Now;
 					var token = await GetToken();
-					_token = new LearnsterToken
+					_cachedToken = new LearnsterToken
 					{
 						Token = token.AccessToken,
 						EndDateTime = getTokenTime.AddSeconds(token.ExpiresIn)
@@ -105,13 +105,13 @@ namespace JAG.Learnster.APIClient.Clients
 			}
 
 			client.DefaultRequestHeaders.Authorization = 
-				new AuthenticationHeaderValue("Bearer", _token.Token);
+				new AuthenticationHeaderValue("Bearer", _cachedToken.Token);
 
 			return client;
 		}
 		
 		private static bool TokenIsActive
-			=> _token != null
-			   && _token.EndDateTime.AddSeconds(-TimeForApiRequest) < DateTime.Now;
+			=> _cachedToken != null
+			   && _cachedToken.EndDateTime.AddSeconds(-TimeForApiRequest) > DateTime.Now;
 	}
 }

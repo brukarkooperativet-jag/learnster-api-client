@@ -32,7 +32,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 			LearnsterOptionsValue.ClientSecret = "FakeSecret";
 			
 			// Act, Assert
-			await _client.Invoking(x => x.GetToken()).Should().ThrowAsync<LearnsterException>();
+			await _client.Invoking(x => x.GetToken()).Should().ThrowAsync<AuthLearnsterException>();
 		}
 	}
 }

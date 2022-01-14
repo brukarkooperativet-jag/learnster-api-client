@@ -47,6 +47,6 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Available
         /// </summary>
         [JsonPropertyName("available")]
-        public string Available { get; set; }
+        public bool Available { get; set; }
     }
 }

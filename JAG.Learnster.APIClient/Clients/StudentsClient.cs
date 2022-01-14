@@ -1,8 +1,11 @@
-﻿using System.Text.Json;
-using JAG.Learnster.APIClient.Exceptions;
+﻿using System.Text;
+using System.Text.Json;
+using JAG.Learnster.APIClient.Constants;
+using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
+using JAG.Learnster.APIClient.Models.Requests;
 using JAG.Learnster.APIClient.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,16 +20,16 @@ namespace JAG.Learnster.APIClient.Clients
 		public StudentsClient(IAuthClient authClient,
 		                      IOptions<LearnsterOptions> learnsterOptions,
 		                      ILogger<StudentsClient> logger)
-			: base(authClient)
+			: base(authClient, logger)
 		{
 			_logger = logger;
 			_learnsterOptions = learnsterOptions.Value;
 		}
 
 		/// <inheritdoc />
-		public async Task<ResponseList<VendorStudents>> GetAllStudents()
+		public async Task<ResponseList<VendorStudent>> GetAllStudents()
 		{
-			using (var client = await AuthorizedClient)
+			using (var client = await CreateAuthorizedClient)
 			{
 #if DEBUG
 				_logger.LogDebug("Getting student list from Learnster");
@@ -35,14 +38,52 @@ namespace JAG.Learnster.APIClient.Clients
 				var response = await client.GetAsync($"vendor/{_learnsterOptions.VendorId}/users/students/");
 
 				if (response.IsSuccessStatusCode)
-					await using (var contentStream = await response.Content.ReadAsStreamAsync())
-						return await JsonSerializer.DeserializeAsync<ResponseList<VendorStudents>>(contentStream);
+						return await response.DeserializeContent<ResponseList<VendorStudent>>();
 
-				var errorContent = await response.Content.ReadAsStringAsync();
-				var errorMessage = $"Can't get student list ({response.StatusCode}): {errorContent}";
+				throw await CreateGetException(response, "Student list");
+			}
+		}
 
-				_logger.LogError(errorMessage);
-				throw new LearnsterException(errorMessage);
+		/// <inheritdoc />
+		public async Task<VendorStudent> CreateStudent(CreateUserRequest createUserRequest)
+		{
+#if DEBUG
+			_logger.LogDebug("Creating Learnster student with email {Email}", createUserRequest.User.Email);
+#endif
+			
+			using (var client = await CreateAuthorizedClient)
+			{
+				var request = new StringContent(
+					JsonSerializer.Serialize(createUserRequest),
+					Encoding.UTF8,
+					ClientConstants.ContentType);
+
+				var response = await client.PostAsync($"vendor/{_learnsterOptions.VendorId}/users/students/", request);
+
+				if (response.IsSuccessStatusCode)
+					return await response.DeserializeContent<VendorStudent>();
+
+				// TODO: Test error with long name (>30)
+				throw await CreatePostException(response, "Student", createUserRequest.User.Email);
+			}
+		}
+		
+		/// <inheritdoc />
+		public async Task DeleteStudent(Guid studentId)
+		{
+#if DEBUG
+			_logger.LogDebug("Deleting Learnster student {StudentId}", studentId);
+#endif
+			
+			using (var client = await CreateAuthorizedClient)
+			{
+				var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/";
+				var response = await client.DeleteAsync(requestUri);
+
+				if (response.IsSuccessStatusCode)
+					return;
+
+				throw await CreateDeleteException(response, "Student", studentId);
 			}
 		}
 	}

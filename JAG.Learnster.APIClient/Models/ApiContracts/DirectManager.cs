@@ -47,6 +47,6 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets VendorStudent
         /// </summary>
         [JsonPropertyName("vendor_student")]
-        public VendorStudents VendorStudent { get; set; }
+        public VendorStudent VendorStudent { get; set; }
     }
 }

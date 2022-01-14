@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
     /// <summary>
     /// VendorUsersVendorStudentSerializer
     /// </summary>
-    public class VendorStudents
+    public class VendorStudent
     {
         /// <summary>
         /// Gets or Sets Id
