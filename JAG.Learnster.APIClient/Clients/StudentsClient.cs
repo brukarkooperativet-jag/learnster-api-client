@@ -1,5 +1,8 @@
-﻿using System.Text;
+﻿using System;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Constants;
 using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Interfaces;

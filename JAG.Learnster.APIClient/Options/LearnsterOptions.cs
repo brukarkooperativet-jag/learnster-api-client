@@ -1,4 +1,6 @@
-﻿namespace JAG.Learnster.APIClient.Options
+﻿using System;
+
+namespace JAG.Learnster.APIClient.Options
 {
 	public class LearnsterOptions
 	{

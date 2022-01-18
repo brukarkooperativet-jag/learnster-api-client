@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 using JAG.Learnster.APIClient.Models.Enums;
 

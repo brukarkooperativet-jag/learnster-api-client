@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Exceptions;
 using JAG.Learnster.APIClient.Interfaces;
 using Microsoft.Extensions.Logging;

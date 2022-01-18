@@ -1,4 +1,6 @@
-﻿using JAG.Learnster.APIClient.Exceptions;
+﻿using System;
+using System.Threading.Tasks;
+using JAG.Learnster.APIClient.Exceptions;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests;

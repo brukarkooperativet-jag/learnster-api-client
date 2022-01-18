@@ -1,4 +1,6 @@
-﻿namespace JAG.Learnster.APIClient.Models
+﻿using System;
+
+namespace JAG.Learnster.APIClient.Models
 {
 	internal class LearnsterToken
 	{
