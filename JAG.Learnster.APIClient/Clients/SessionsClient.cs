@@ -1,4 +1,7 @@
-﻿using JAG.Learnster.APIClient.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
@@ -20,6 +23,25 @@ namespace JAG.Learnster.APIClient.Clients
         {
             _logger = logger;
             _learnsterOptions = learnsterOptions.Value;
+        }
+
+        public async Task<IReadOnlyCollection<SessionShortWithAvatar>> GetAll()
+        {
+#if DEBUG
+            _logger.LogDebug("Getting list of sessions");
+#endif
+            
+            using (var client = await CreateAuthorizedClient)
+            {
+                var requestUri =
+                    $"vendor/{_learnsterOptions.VendorId}/sessions/";
+                var response = await client.GetAsync(requestUri);
+
+                if (response.IsSuccessStatusCode)
+                    return (await response.DeserializeContent<ResponseList<SessionShortWithAvatar>>()).Results;
+
+                throw await CreateGetException(response, "Session list");
+            }
         }
 
         public async Task<ResponseList<PossibleChoicesSessionsList>> GetAvailableForStudent(Guid studentId)
