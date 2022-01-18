@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
     /// <summary>
     /// Defines Type
     /// </summary>
-    public enum TagTypeEnum
+    public enum TagType
     {
         /// <summary>
         /// Enum Course for value: course

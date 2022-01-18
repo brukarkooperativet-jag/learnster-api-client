@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
     /// <summary>
     /// Defines FileType
     /// </summary>
-    public enum FileTypeEnum
+    public enum FileType
     {
         /// <summary>
         /// Enum ImageBitmap for value: image-bitmap

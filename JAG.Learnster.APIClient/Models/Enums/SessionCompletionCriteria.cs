@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
     /// <summary>
     /// Defines CompletionCriteria
     /// </summary>
-    public enum CompletionCriteriaEnum
+    public enum SessionCompletionCriteria
     {
         /// <summary>
         /// Enum Dynamic for value: dynamic

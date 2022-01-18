@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
     /// <summary>
     /// Defines Passed
     /// </summary>
-    public enum PassedEnum
+    public enum CoursePassed
     {
         /// <summary>
         /// Enum Notexist for value: not_exist

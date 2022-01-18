@@ -13,7 +13,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Type
         /// </summary>
         [JsonPropertyName("type")]
-        public VendorTypeEnum? Type { get; set; }
+        public VendorType? Type { get; set; }
 
         /// <summary>
         /// Gets or Sets Id

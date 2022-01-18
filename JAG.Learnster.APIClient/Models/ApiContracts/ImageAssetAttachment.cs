@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
+using JAG.Learnster.APIClient.Helpers;
 using JAG.Learnster.APIClient.Models.Enums;
 
 namespace JAG.Learnster.APIClient.Models.ApiContracts
@@ -12,7 +14,8 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets FileType
         /// </summary>
         [JsonPropertyName("file_type")]
-        public FileTypeEnum? FileType { get; set; }
+        [JsonConverter(typeof(CustomizableJsonStringEnumConverter<FileType?>))]
+        public FileType? FileType { get; set; }
         
         /// <summary>
         /// Gets or Sets Url

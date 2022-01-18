@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
     /// <summary>
     /// Defines Status
     /// </summary>
-    public enum StatusEnum
+    public enum CertificationStatus
     {
         /// <summary>
         /// Enum DISABLED for value: DISABLED

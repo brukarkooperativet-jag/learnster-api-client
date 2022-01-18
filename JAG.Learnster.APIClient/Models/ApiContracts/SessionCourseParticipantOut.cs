@@ -13,13 +13,13 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Passed
         /// </summary>
         [JsonPropertyName("passed")]
-        public Enums.PassedEnum? Passed { get; set; }
+        public Enums.CoursePassed? Passed { get; set; }
 
         /// <summary>
         /// Gets or Sets ManualApproval
         /// </summary>
         [JsonPropertyName("manual_approval")]
-        public ManualApprovalEnum? ManualApproval { get; set; }
+        public SessionManualApproval? ManualApproval { get; set; }
         
         /// <summary>
         /// Gets or Sets Id

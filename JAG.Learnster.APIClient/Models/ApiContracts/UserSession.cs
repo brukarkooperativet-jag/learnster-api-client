@@ -13,7 +13,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets CompletionCriteria
         /// </summary>
         [JsonPropertyName("completion_criteria")]
-        public CompletionCriteriaEnum? CompletionCriteria { get; set; }
+        public SessionCompletionCriteria? CompletionCriteria { get; set; }
         
         /// <summary>
         /// Gets or Sets Id

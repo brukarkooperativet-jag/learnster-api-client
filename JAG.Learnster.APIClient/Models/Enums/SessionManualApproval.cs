@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
     /// <summary>
     /// Defines ManualApproval
     /// </summary>
-    public enum ManualApprovalEnum
+    public enum SessionManualApproval
     {
         /// <summary>
         /// Enum Empty for value: empty

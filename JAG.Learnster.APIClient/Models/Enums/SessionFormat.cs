@@ -1,28 +1,28 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
     /// <summary>
     /// Defines Format
     /// </summary>
-    public enum FormatEnum
+    public enum SessionFormat
     {
         /// <summary>
         /// Enum Classroom for value: classroom
         /// </summary>
-        [JsonPropertyName("classroom")]
+        [EnumMember(Value = "classroom")]
         Classroom = 1,
             
         /// <summary>
         /// Enum ELearning for value: e-learning
         /// </summary>
-        [JsonPropertyName("e-learning")]
+        [EnumMember(Value = "e-learning")]
         ELearning = 2,
             
         /// <summary>
         /// Enum Blended for value: blended
         /// </summary>
-        [JsonPropertyName("blended")]
-        Blended = 3
+        [EnumMember(Value = "blended")]
+        Blended1 = 3
     }
 }

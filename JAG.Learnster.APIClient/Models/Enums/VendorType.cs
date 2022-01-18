@@ -5,7 +5,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
     /// <summary>
     /// Defines Type
     /// </summary>
-    public enum VendorTypeEnum
+    public enum VendorType
     {
         /// <summary>
         /// Enum Default for value: default

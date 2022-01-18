@@ -12,7 +12,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Type
         /// </summary>
         [JsonPropertyName("type")]
-        public Enums.TagTypeEnum? Type { get; set; }
+        public Enums.TagType? Type { get; set; }
         
         /// <summary>
         /// Gets or Sets Id

@@ -1,4 +1,6 @@
+using System;
 using System.Text.Json.Serialization;
+using JAG.Learnster.APIClient.Helpers;
 using JAG.Learnster.APIClient.Models.Enums;
 
 namespace JAG.Learnster.APIClient.Models.ApiContracts
@@ -6,13 +8,14 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
     /// <summary>
     /// VendorSessionShortSerializerWithAvatar
     /// </summary>
-    public class VendorSessionShortSerializerWithAvatar
+    public class SessionShortWithAvatar
     {
         /// <summary>
         /// Gets or Sets Format
         /// </summary>
         [JsonPropertyName("format")]
-        public FormatEnum? Format { get; set; }
+        [JsonConverter(typeof(CustomizableJsonStringEnumConverter<SessionFormat?>))]
+        public SessionFormat? Format { get; set; }
         
         /// <summary>
         /// Gets or Sets Id

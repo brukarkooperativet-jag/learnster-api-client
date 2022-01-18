@@ -13,7 +13,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Status
         /// </summary>
         [JsonPropertyName("status")]
-        public StatusEnum? Status { get; set; }
+        public CertificationStatus? Status { get; set; }
 
         /// <summary>
         /// Gets or Sets LatestCertificationDate
