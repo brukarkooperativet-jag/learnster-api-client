@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
@@ -10,25 +10,25 @@ namespace JAG.Learnster.APIClient.Models.Enums
         /// <summary>
         /// Enum Dynamic for value: dynamic
         /// </summary>
-        [JsonPropertyName("dynamic")]
+        [EnumMember(Value = "dynamic")]
         Dynamic = 1,
             
         /// <summary>
         /// Enum Static for value: static
         /// </summary>
-        [JsonPropertyName("static")]
+        [EnumMember(Value = "static")]
         Static = 2,
             
         /// <summary>
         /// Enum Manual for value: manual
         /// </summary>
-        [JsonPropertyName("manual")]
+        [EnumMember(Value = "manual")]
         Manual = 3,
             
         /// <summary>
         /// Enum Off for value: off
         /// </summary>
-        [JsonPropertyName("off")]
+        [EnumMember(Value = "off")]
         Off = 4
     }
 }

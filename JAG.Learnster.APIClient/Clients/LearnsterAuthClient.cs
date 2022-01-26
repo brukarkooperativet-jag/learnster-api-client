@@ -1,6 +1,7 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Constants;
 using JAG.Learnster.APIClient.Exceptions;
 using JAG.Learnster.APIClient.Interfaces;
@@ -13,21 +14,19 @@ using Microsoft.Extensions.Options;
 
 namespace JAG.Learnster.APIClient.Clients
 {
-	public class AuthClient : IAuthClient
+	/// <inheritdoc />
+	public class LearnsterAuthClient : ILearnsterAuthClient
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly LearnsterOptions _learnsterOptions;
-		private readonly ILogger<AuthClient> _logger;
+		private readonly ILogger<LearnsterAuthClient> _logger;
 
-		private static LearnsterToken _cachedToken;
-		
-		private static readonly AutoResetEvent AutoResetEvent = new AutoResetEvent(true);
-		private const int EventTimeout = 5 * 60 * 1000; // 5 minutes
-		private const int TimeForApiRequest = 20;
-
-		public AuthClient(IHttpClientFactory httpClientFactory,
-		                  IOptions<LearnsterOptions> learnsterOptions,
-		                  ILogger<AuthClient> logger)
+		/// <summary>
+		/// 
+		/// </summary>
+		public LearnsterAuthClient(IHttpClientFactory httpClientFactory,
+		                           IOptions<LearnsterOptions> learnsterOptions,
+		                           ILogger<LearnsterAuthClient> logger)
 		{
 			_httpClientFactory = httpClientFactory;
 			_learnsterOptions = learnsterOptions.Value;
@@ -53,7 +52,7 @@ namespace JAG.Learnster.APIClient.Clients
 				_logger.LogDebug("Getting auth token from Learnster");
 #endif
 				
-				var request = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, ClientConstants.ContentType);
+				var request = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, ClientConstants.ApplicationJsonContentType);
 				var response = await client.PostAsync("auth/token/", request);
 
 				if (response.IsSuccessStatusCode)
@@ -72,46 +71,5 @@ namespace JAG.Learnster.APIClient.Clients
 				throw new AuthLearnsterException(errorMessage);
 			}
 		}
-
-		/// <inheritdoc />
-		public async Task<HttpClient> CreateAuthorizedClient()
-		{
-			var client = _httpClientFactory.CreateClient();
-			client.BaseAddress = _learnsterOptions.ApiUrl;
-			
-			if (!AutoResetEvent.WaitOne(EventTimeout))
-			{
-				var errorMessage = "Learnster client can't get auth token. Token updating is busy";
-				_logger.LogError($"{nameof(TimeoutException)}: {errorMessage}");
-				throw new TimeoutException(errorMessage);
-			}
-
-			try
-			{
-				if (!TokenIsActive)
-				{
-					var getTokenTime = DateTime.Now;
-					var token = await GetToken();
-					_cachedToken = new LearnsterToken
-					{
-						Token = token.AccessToken,
-						EndDateTime = getTokenTime.AddSeconds(token.ExpiresIn)
-					};
-				}
-			}
-			finally
-			{
-				AutoResetEvent.Set();
-			}
-
-			client.DefaultRequestHeaders.Authorization = 
-				new AuthenticationHeaderValue("Bearer", _cachedToken.Token);
-
-			return client;
-		}
-		
-		private static bool TokenIsActive
-			=> _cachedToken != null
-			   && _cachedToken.EndDateTime.AddSeconds(-TimeForApiRequest) > DateTime.Now;
 	}
 }

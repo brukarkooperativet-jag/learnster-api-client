@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using JAG.Learnster.APIClient.Helpers;
+using JAG.Learnster.APIClient.Converters;
 using JAG.Learnster.APIClient.Models.Enums;
 
 namespace JAG.Learnster.APIClient.Models.ApiContracts

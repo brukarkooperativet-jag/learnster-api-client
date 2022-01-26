@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
@@ -10,31 +10,31 @@ namespace JAG.Learnster.APIClient.Models.Enums
         /// <summary>
         /// Enum Notexist for value: not_exist
         /// </summary>
-        [JsonPropertyName("not_exist")]
+        [EnumMember(Value = "not_exist")]
         NotExist = 1,
             
         /// <summary>
         /// Enum Ongoing for value: ongoing
         /// </summary>
-        [JsonPropertyName("ongoing")]
+        [EnumMember(Value = "ongoing")]
         Ongoing = 2,
             
         /// <summary>
         /// Enum Failed for value: failed
         /// </summary>
-        [JsonPropertyName("failed")]
+        [EnumMember(Value = "failed")]
         Failed = 3,
             
         /// <summary>
         /// Enum Success for value: success
         /// </summary>
-        [JsonPropertyName("success")]
+        [EnumMember(Value = "success")]
         Success = 4,
             
         /// <summary>
         /// Enum Pending for value: pending
         /// </summary>
-        [JsonPropertyName("pending")]
+        [EnumMember(Value = "pending")]
         Pending = 5
     }
 }

@@ -2,6 +2,6 @@
 {
 	internal static class ClientConstants
 	{
-		internal const string ContentType = "application/json";
+		internal const string ApplicationJsonContentType = "application/json";
 	}
 }

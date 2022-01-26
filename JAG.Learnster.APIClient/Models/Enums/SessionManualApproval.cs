@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
@@ -10,19 +10,19 @@ namespace JAG.Learnster.APIClient.Models.Enums
         /// <summary>
         /// Enum Empty for value: empty
         /// </summary>
-        [JsonPropertyName("empty")]
+        [EnumMember(Value = "empty")]
         Empty = 1,
             
         /// <summary>
         /// Enum Approved for value: approved
         /// </summary>
-        [JsonPropertyName("approved")]
+        [EnumMember(Value = "approved")]
         Approved = 2,
             
         /// <summary>
         /// Enum Rejected for value: rejected
         /// </summary>
-        [JsonPropertyName("rejected")]
+        [EnumMember(Value = "rejected")]
         Rejected = 3
     }
 }

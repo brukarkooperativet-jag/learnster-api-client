@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
@@ -10,7 +10,7 @@ namespace JAG.Learnster.APIClient.Models.Enums
         /// <summary>
         /// Enum Course for value: course
         /// </summary>
-        [JsonPropertyName("course")]
+        [EnumMember(Value = "course")]
         Course = 1
     }
 }

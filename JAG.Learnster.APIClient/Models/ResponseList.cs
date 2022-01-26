@@ -4,15 +4,31 @@ using System.Text.Json.Serialization;
 
 namespace JAG.Learnster.APIClient.Models
 {
+	/// <summary>
+	/// List of result items
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public class ResponseList<T>
 	{
+		/// <summary>
+		/// Count of items in the current bulk
+		/// </summary>
 		[JsonPropertyName("count")]
 		public int Count { get; set; }
 
-		// TODO: Test uris
+		/// <summary>
+		/// Next bulk of results
+		/// </summary>
 		public Uri Next { get; set; }
+
+		/// <summary>
+		/// Previous bulk of results
+		/// </summary>
 		public Uri Previous { get; set; }
 
+		/// <summary>
+		/// Collection of results
+		/// </summary>
 		[JsonPropertyName("results")]
 		public IReadOnlyCollection<T> Results { get; set; }
 	}

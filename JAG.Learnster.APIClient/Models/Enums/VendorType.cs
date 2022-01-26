@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
@@ -10,19 +10,19 @@ namespace JAG.Learnster.APIClient.Models.Enums
         /// <summary>
         /// Enum Default for value: default
         /// </summary>
-        [JsonPropertyName("default")]
+        [EnumMember(Value = "default")]
         Default = 1,
             
         /// <summary>
         /// Enum Inline for value: inline
         /// </summary>
-        [JsonPropertyName("inline")]
+        [EnumMember(Value = "inline")]
         Inline = 2,
             
         /// <summary>
         /// Enum Regular for value: regular
         /// </summary>
-        [JsonPropertyName("regular")]
+        [EnumMember(Value = "regular")]
         Regular = 3
     }
 }

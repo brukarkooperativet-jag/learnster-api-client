@@ -2,22 +2,20 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using JAG.Learnster.APIClient.Clients;
+using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models.Requests;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 {
 	public class StudentsClientTests : BaseClientTests
 	{
-		private readonly StudentsClient _client;
+		private readonly LearnsterStudentsClient _client;
 
 		public StudentsClientTests()
 		{
-			_client = new StudentsClient(
-				AuthClient,
-				LearnsterOptionsMock.Object,
-				NullLogger<StudentsClient>.Instance);
+			_client = (LearnsterStudentsClient) ServiceProvider.GetRequiredService<ILearnsterStudentsClient>();
 		}
 
 		[Fact]
@@ -42,7 +40,8 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 					Email = $"user-{currentTimeString}@integrated.test",
 					FirstName = $"User_{currentTimeString}",
 					LastName = "Test"
-				}
+				},
+				
 			};
 			
 			// Act

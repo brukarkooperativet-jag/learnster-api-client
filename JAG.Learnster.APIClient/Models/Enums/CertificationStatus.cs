@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
@@ -10,31 +10,31 @@ namespace JAG.Learnster.APIClient.Models.Enums
         /// <summary>
         /// Enum DISABLED for value: DISABLED
         /// </summary>
-        [JsonPropertyName("DISABLED")]
+        [EnumMember(Value = "DISABLED")]
         Disabled = 1,
             
         /// <summary>
         /// Enum CERTIFIED for value: CERTIFIED
         /// </summary>
-        [JsonPropertyName("CERTIFIED")]
+        [EnumMember(Value = "CERTIFIED")]
         Certified = 2,
             
         /// <summary>
         /// Enum RECERTIFICATION for value: RECERTIFICATION
         /// </summary>
-        [JsonPropertyName("RECERTIFICATION")]
+        [EnumMember(Value = "RECERTIFICATION")]
         Recertification = 3,
             
         /// <summary>
         /// Enum EXPIRED for value: EXPIRED
         /// </summary>
-        [JsonPropertyName("EXPIRED")]
+        [EnumMember(Value = "EXPIRED")]
         Expired = 4,
             
         /// <summary>
         /// Enum NOTCERTIFIED for value: NOT_CERTIFIED
         /// </summary>
-        [JsonPropertyName("NOT_CERTIFIED")]
+        [EnumMember(Value = "NOT_CERTIFIED")]
         NotCertified = 5
     }
 }

@@ -6,14 +6,20 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace JAG.Learnster.APIClient.Helpers
+namespace JAG.Learnster.APIClient.Converters
 {
+    // TODO: [REFACTORING] Use default JsonStringEnumConverter after EnumMember implementation
+    /// <summary>
+    /// Convert EnumMember string names to enum
+    /// </summary>
+    /// <typeparam name="TEnum"></typeparam>
     public class CustomizableJsonStringEnumConverter<TEnum> : JsonConverter<TEnum>
     {
         // ReSharper disable once StaticMemberInGenericType
         private static readonly ConcurrentDictionary<Type, object> CachedEnumMappings = new();
         private CachedEnumValues<TEnum> _cachedEnumValues;
 
+        /// <inheritdoc />
         public override bool CanConvert(Type typeToConvert)
         {
             if (typeToConvert.IsEnum)
@@ -31,6 +37,7 @@ namespace JAG.Learnster.APIClient.Helpers
             return false;
         }
 
+        /// <inheritdoc />
         public override TEnum Read(ref Utf8JsonReader reader,
                                    Type typeToConvert,
                                    JsonSerializerOptions options)
@@ -54,6 +61,7 @@ namespace JAG.Learnster.APIClient.Helpers
             return default;
         }
 
+        /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer,
                                    TEnum value,
                                    JsonSerializerOptions options)
@@ -98,12 +106,12 @@ namespace JAG.Learnster.APIClient.Helpers
 
             return mapping;
         }
-    }
-    
-    internal class CachedEnumValues<TEnum>
-    {
-        public Dictionary<TEnum, string> EnumToString { get; } = new();
-        public Dictionary<string, TEnum> StringToEnum { get; }= new();
-        public Dictionary<int, TEnum> NumberToEnum { get; } = new();
+        
+        internal class CachedEnumValues<TCachedEnum>
+        {
+            public Dictionary<TCachedEnum, string> EnumToString { get; } = new();
+            public Dictionary<string, TCachedEnum> StringToEnum { get; }= new();
+            public Dictionary<int, TCachedEnum> NumberToEnum { get; } = new();
+        }
     }
 }

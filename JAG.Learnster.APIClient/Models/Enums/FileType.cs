@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace JAG.Learnster.APIClient.Models.Enums
 {
@@ -10,37 +10,37 @@ namespace JAG.Learnster.APIClient.Models.Enums
         /// <summary>
         /// Enum ImageBitmap for value: image-bitmap
         /// </summary>
-        [JsonPropertyName("image-bitmap")]
+        [EnumMember(Value = "image-bitmap")]
         ImageBitmap = 1,
             
         /// <summary>
         /// Enum ImageVector for value: image-vector
         /// </summary>
-        [JsonPropertyName("image-vector")]
+        [EnumMember(Value = "image-vector")]
         ImageVector = 2,
             
         /// <summary>
         /// Enum Audio for value: audio
         /// </summary>
-        [JsonPropertyName("audio")]
+        [EnumMember(Value = "audio")]
         Audio = 3,
             
         /// <summary>
         /// Enum Video for value: video
         /// </summary>
-        [JsonPropertyName("video")]
+        [EnumMember(Value = "video")]
         Video = 4,
             
         /// <summary>
         /// Enum Scorm for value: scorm
         /// </summary>
-        [JsonPropertyName("scorm")]
+        [EnumMember(Value = "scorm")]
         Scorm = 5,
             
         /// <summary>
         /// Enum Document for value: document
         /// </summary>
-        [JsonPropertyName("document")]
+        [EnumMember(Value = "document")]
         Document = 6
     }
 }

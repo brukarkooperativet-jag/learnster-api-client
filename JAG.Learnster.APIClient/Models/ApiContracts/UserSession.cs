@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json.Serialization;
+using JAG.Learnster.APIClient.Converters;
 using JAG.Learnster.APIClient.Models.Enums;
 
 namespace JAG.Learnster.APIClient.Models.ApiContracts
@@ -13,6 +14,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets CompletionCriteria
         /// </summary>
         [JsonPropertyName("completion_criteria")]
+        [JsonConverter(typeof(CustomizableJsonStringEnumConverter<SessionCompletionCriteria?>))]
         public SessionCompletionCriteria? CompletionCriteria { get; set; }
         
         /// <summary>

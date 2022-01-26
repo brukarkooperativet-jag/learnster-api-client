@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentAssertions;
-using JAG.Learnster.APIClient.Helpers;
+using JAG.Learnster.APIClient.Converters;
 using Xunit;
 
 namespace JAG.Learnster.APIClient.UnitTests.Tests

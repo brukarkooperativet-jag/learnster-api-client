@@ -1,20 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Exceptions;
-using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests;
 
 namespace JAG.Learnster.APIClient.Interfaces
 {
-    public interface IStudentsClient
+    /// <summary>
+    /// Work with learnster students
+    /// </summary>
+    public interface ILearnsterStudentsClient
     {
         /// <summary>
         /// Get all students for vendor
         /// </summary>
         /// <returns></returns>
         /// <exception cref="LearnsterException">Throw when can't get students from the service</exception>
-        Task<ResponseList<VendorStudent>> GetAllStudents();
+        Task<IReadOnlyCollection<VendorStudent>> GetAllStudents();
+
+        /// <summary>
+        /// Get student by email or identifier 
+        /// </summary>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
+        Task<IReadOnlyCollection<VendorStudent>> SearchStudents(string searchString);
 
         /// <summary>
         /// Create user and student

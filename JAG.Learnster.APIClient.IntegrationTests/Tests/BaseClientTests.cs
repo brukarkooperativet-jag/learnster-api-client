@@ -1,45 +1,34 @@
-﻿using System.Net.Http;
+﻿using System;
 using System.Reflection;
-using JAG.Learnster.APIClient.Clients;
+using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.IntegrationTests.Options;
-using JAG.Learnster.APIClient.Interfaces;
-using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Options;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Moq;
 
 namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 {
 	public class BaseClientTests
 	{
-		protected readonly Mock<IOptions<LearnsterOptions>> LearnsterOptionsMock;
-		protected readonly IAuthClient AuthClient;
-		protected readonly LearnsterOptions LearnsterOptionsValue;
-		protected readonly TestLearnsterOptions TestLearnsterOptions;
-
+		protected readonly IServiceProvider ServiceProvider;
 		protected readonly IConfiguration Configuration;
+		
 
 		protected BaseClientTests()
 		{
 			Configuration = BuildConfiguration();
-			LearnsterOptionsValue = GetClientOptions();
-			TestLearnsterOptions = GetTestLearnsterOptions();
-			
-			var clientFactory = new Mock<IHttpClientFactory>();
-			clientFactory
-				.Setup(x => x.CreateClient(Microsoft.Extensions.Options.Options.DefaultName))
-				.Returns(() => new HttpClient());
-			
-			LearnsterOptionsMock = new Mock<IOptions<LearnsterOptions>>();
-			LearnsterOptionsMock.Setup(x => x.Value).Returns(LearnsterOptionsValue);
-			
-			AuthClient = new AuthClient(
-				clientFactory.Object,
-				LearnsterOptionsMock.Object,
-				NullLogger<AuthClient>.Instance);
+
+			ServiceProvider = new ServiceCollection()
+				.Configure<LearnsterOptions>(Configuration.GetSection(LearnsterOptions.SECTION_NAME))
+				.Configure<TestLearnsterOptions>(Configuration.GetSection(TestLearnsterOptions.SECTION_NAME))
+				.AddHttpClient()
+				.RegisterLearnsterClient()
+				.BuildServiceProvider();
 		}
+
+		protected TestLearnsterOptions TestLearnsterOptions
+			=> ServiceProvider.GetRequiredService<IOptions<TestLearnsterOptions>>().Value;
 
 		private IConfiguration BuildConfiguration()
 		{
@@ -48,20 +37,6 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 				.AddEnvironmentVariables()
 				.AddUserSecrets(Assembly.GetCallingAssembly())
 				.Build();
-		}
-
-		private LearnsterOptions GetClientOptions()
-		{
-			return Configuration
-				.GetSection(LearnsterOptions.SECTION_NAME)
-				.Get<LearnsterOptions>();
-		}
-		
-		private TestLearnsterOptions GetTestLearnsterOptions()
-		{
-			return Configuration
-				.GetSection(TestLearnsterOptions.SECTION_NAME)
-				.Get<TestLearnsterOptions>();
 		}
 	}
 }

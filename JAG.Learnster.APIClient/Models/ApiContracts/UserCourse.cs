@@ -24,7 +24,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets NumberOfSessions
         /// </summary>
         [JsonPropertyName("number_of_sessions")]
-        public string NumberOfSessions { get; set; }
+        public int NumberOfSessions { get; set; }
 
         /// <summary>
         /// Gets or Sets TrackProgress
