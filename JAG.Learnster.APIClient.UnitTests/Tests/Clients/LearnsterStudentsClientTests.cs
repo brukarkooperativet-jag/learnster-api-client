@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -10,10 +8,8 @@ using JAG.Learnster.APIClient.Clients;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests;
-using JAG.Learnster.APIClient.Options;
 using JAG.Learnster.APIClient.UnitTests.Helpers;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace JAG.Learnster.APIClient.UnitTests.Tests.Clients

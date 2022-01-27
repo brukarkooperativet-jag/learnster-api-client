@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
 using FluentAssertions;
 using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models;
