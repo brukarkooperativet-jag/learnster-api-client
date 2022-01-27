@@ -14,10 +14,10 @@ namespace JAG.Learnster.APIClient.Options
 		public const string SECTION_NAME = "Learnster";
 
 		/// <summary>
-		/// Url to learnster api
+		/// Url to learnster
 		/// </summary>
 		[Required]
-		public Uri ApiUrl { get; set; }
+		public Uri Url { get; set; }
 
 		/// <summary>
 		/// Vendor Id
@@ -42,5 +42,8 @@ namespace JAG.Learnster.APIClient.Options
 		/// </summary>
 		[Required]
 		public string GrantType { get; set; }
+
+		private Uri _apiV1Url;
+		public Uri ApiV1Url => _apiV1Url ??= new Uri(Url, "api/public/v1/");
 	}
 }

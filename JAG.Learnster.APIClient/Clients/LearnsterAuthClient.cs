@@ -39,7 +39,7 @@ namespace JAG.Learnster.APIClient.Clients
 		{
 			using (var client = _httpClientFactory.CreateClient())
 			{
-				client.BaseAddress = _learnsterOptions.ApiUrl;
+				client.BaseAddress = _learnsterOptions.ApiV1Url;
 				
 				var requestBody = new GetTokenRequest()
 				{

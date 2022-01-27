@@ -45,7 +45,7 @@ namespace JAG.Learnster.APIClient.Services
         public async Task<HttpClient> CreateAuthorizedClient()
         {
             var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = _learnsterOptions.ApiUrl;
+            client.BaseAddress = _learnsterOptions.ApiV1Url;
 
             if (!AutoResetEvent.WaitOne(EventTimeout))
             {
