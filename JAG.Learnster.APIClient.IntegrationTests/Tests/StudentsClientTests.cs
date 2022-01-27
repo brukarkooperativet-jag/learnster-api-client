@@ -22,7 +22,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 		public async Task GetAllStudents_Success()
 		{
 			// Act
-			var students = await _client.GetAllStudents();
+			var students = await _client.GetAll();
 			
 			// Assert
 			students.Should().NotBeNull();

@@ -24,7 +24,7 @@ namespace JAG.Learnster.APIClient.Services
         private static LearnsterToken _cachedToken;
 
         private static readonly AutoResetEvent AutoResetEvent = new AutoResetEvent(true);
-        private const int EventTimeout = 5 * 60 * 1000; // 5 minutes
+        private static int EventTimeout = 5 * 60 * 1000; // 5 minutes
         private const int TimeForApiRequest = 20;
 
         /// <summary>
@@ -65,6 +65,10 @@ namespace JAG.Learnster.APIClient.Services
                         Token = token.AccessToken,
                         EndDateTime = getTokenTime.AddSeconds(token.ExpiresIn)
                     };
+
+#if DEBUG
+                    _logger.LogDebug($"Learnster token cached for {token.ExpiresIn} seconds");
+#endif
                 }
             }
             finally

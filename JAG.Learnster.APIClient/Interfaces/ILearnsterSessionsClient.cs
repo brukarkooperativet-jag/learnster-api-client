@@ -15,7 +15,7 @@ namespace JAG.Learnster.APIClient.Interfaces
         /// </summary>
         /// <param name="studentId"></param>
         /// <returns></returns>
-        Task<IReadOnlyCollection<PossibleChoicesSessionsList>> GetAvailableForStudent(Guid studentId);
+        Task<IReadOnlyCollection<PossibleChoicesSession>> GetAvailableForStudent(Guid studentId);
 
         /// <summary>
         /// Get all sessions

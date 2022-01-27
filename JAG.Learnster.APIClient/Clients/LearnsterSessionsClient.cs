@@ -40,8 +40,7 @@ namespace JAG.Learnster.APIClient.Clients
             
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-                var requestUri =
-                    $"vendor/{_learnsterOptions.VendorId}/sessions/";
+                var requestUri = $"vendor/{_learnsterOptions.VendorId}/sessions/";
                 var response = await client.GetAsync(requestUri);
 
                 if (response.IsSuccessStatusCode)
@@ -52,7 +51,7 @@ namespace JAG.Learnster.APIClient.Clients
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<PossibleChoicesSessionsList>> GetAvailableForStudent(Guid studentId)
+        public async Task<IReadOnlyCollection<PossibleChoicesSession>> GetAvailableForStudent(Guid studentId)
         {
 #if DEBUG
             _logger.LogDebug($"Getting session list for student {studentId}", studentId);
@@ -66,7 +65,7 @@ namespace JAG.Learnster.APIClient.Clients
 
                 if (response.IsSuccessStatusCode)
                     return await response
-                        .DeserializeContent<ResponseList<PossibleChoicesSessionsList>>()
+                        .DeserializeContent<ResponseList<PossibleChoicesSession>>()
                         .ContinueWith(x => x.Result.Results);
 
                 throw await ThrowGetException(response, "Available session list for student", studentId);
@@ -82,8 +81,7 @@ namespace JAG.Learnster.APIClient.Clients
             
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-                var requestUri =
-                    $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/sessions/";
+                var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/sessions/";
                 var response = await client.GetAsync(requestUri);
 
                 if (response.IsSuccessStatusCode)

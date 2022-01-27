@@ -6,7 +6,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
     /// <summary>
     /// PublicPossibleChoicesSessionsList
     /// </summary>
-    public class PossibleChoicesSessionsList
+    public class PossibleChoicesSession
     {
         /// <summary>
         /// Gets or Sets Id
@@ -18,7 +18,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Course
         /// </summary>
         [JsonPropertyName("course")]
-        public VendorUsersCourseMinimalSerializer Course { get; set; }
+        public CourseMinimal Course { get; set; }
 
         /// <summary>
         /// Gets or Sets Name

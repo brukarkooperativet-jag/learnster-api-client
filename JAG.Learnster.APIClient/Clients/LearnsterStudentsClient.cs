@@ -33,7 +33,7 @@ namespace JAG.Learnster.APIClient.Clients
 		}
 
 		/// <inheritdoc />
-		public async Task<IReadOnlyCollection<VendorStudent>> GetAllStudents()
+		public async Task<IReadOnlyCollection<VendorStudent>> GetAll()
 		{
 			using (var client = await _httpClientFactory.CreateAuthorizedClient())
 			{

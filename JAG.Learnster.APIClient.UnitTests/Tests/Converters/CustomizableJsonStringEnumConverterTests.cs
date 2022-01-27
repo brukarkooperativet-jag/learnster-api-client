@@ -5,9 +5,9 @@ using FluentAssertions;
 using JAG.Learnster.APIClient.Converters;
 using Xunit;
 
-namespace JAG.Learnster.APIClient.UnitTests.Tests
+namespace JAG.Learnster.APIClient.UnitTests.Tests.Converters
 {
-    public class HttpClientExtensionsTests
+    public class CustomizableJsonStringEnumConverterTests
     {
         [Theory]
         [InlineData("test", TestEnum.OneWorldTest)]

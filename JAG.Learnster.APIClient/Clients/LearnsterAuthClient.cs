@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 namespace JAG.Learnster.APIClient.Clients
 {
 	/// <inheritdoc />
-	public class LearnsterAuthClient : ILearnsterAuthClient
+	public class LearnsterAuthClient : BaseClient, ILearnsterAuthClient
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly LearnsterOptions _learnsterOptions;
@@ -27,6 +27,7 @@ namespace JAG.Learnster.APIClient.Clients
 		public LearnsterAuthClient(IHttpClientFactory httpClientFactory,
 		                           IOptions<LearnsterOptions> learnsterOptions,
 		                           ILogger<LearnsterAuthClient> logger)
+			: base(logger)
 		{
 			_httpClientFactory = httpClientFactory;
 			_learnsterOptions = learnsterOptions.Value;
@@ -52,7 +53,7 @@ namespace JAG.Learnster.APIClient.Clients
 				_logger.LogDebug("Getting auth token from Learnster");
 #endif
 				
-				var request = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, ClientConstants.ApplicationJsonContentType);
+				var request = CreateRequestContent(requestBody);
 				var response = await client.PostAsync("auth/token/", request);
 
 				if (response.IsSuccessStatusCode)

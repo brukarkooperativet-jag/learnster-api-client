@@ -17,7 +17,7 @@ namespace JAG.Learnster.APIClient.Interfaces
         /// </summary>
         /// <returns></returns>
         /// <exception cref="LearnsterException">Throw when can't get students from the service</exception>
-        Task<IReadOnlyCollection<VendorStudent>> GetAllStudents();
+        Task<IReadOnlyCollection<VendorStudent>> GetAll();
 
         /// <summary>
         /// Get student by email or identifier 
