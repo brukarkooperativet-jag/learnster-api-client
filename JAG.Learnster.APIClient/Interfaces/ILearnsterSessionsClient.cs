@@ -24,9 +24,16 @@ namespace JAG.Learnster.APIClient.Interfaces
         Task<IReadOnlyCollection<SessionShortWithAvatar>> GetAll();
 
         /// <summary>
-        /// Get student courses
+        /// Get student sessions
         /// </summary>
         /// <returns></returns>
-        Task<IReadOnlyCollection<UserCourseParticipant>> GetStudentSessions(Guid studentId);
+        Task<IReadOnlyCollection<SessionParticipant>> GetStudentSessions(Guid studentId);
+
+
+        /// <summary>
+        /// Get student sessions history
+        /// </summary>
+        /// <returns></returns>
+        Task<IReadOnlyCollection<StudentHistory>> GetStudentSessionsHistory(Guid studentId);
     }
 }

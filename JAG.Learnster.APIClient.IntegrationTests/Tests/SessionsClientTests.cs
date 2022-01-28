@@ -51,5 +51,17 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
             sessionList.Should().NotBeNull();
             sessionList.Count.Should().BeGreaterThan(0);
         }
+        
+        [Fact]
+        public async Task GetStudentSessionsHistory_UserHasFinishedSessions_ReturnSessions()
+        {
+            // Act
+            var sessionList = await _learnsterSessionsClient
+                .GetStudentSessionsHistory(TestLearnsterOptions.StudentWithCourses.StudentId);
+            
+            // Assert
+            sessionList.Should().NotBeNull();
+            sessionList.Count.Should().BeGreaterThan(0);
+        }
     }
 }

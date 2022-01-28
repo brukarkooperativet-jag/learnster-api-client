@@ -6,7 +6,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
     /// <summary>
     /// PublicUserStudentHistory
     /// </summary>
-    public class UserStudentHistory
+    public class StudentHistory
     {
         /// <summary>
         /// Gets or Sets Id
@@ -43,6 +43,6 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets CourseParticipant
         /// </summary>
         [JsonPropertyName("course_participant")]
-        public UserCourseParticipant CourseParticipant { get; set; }
+        public SessionParticipant SessionParticipant { get; set; }
     }
 }

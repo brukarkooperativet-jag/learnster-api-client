@@ -81,8 +81,8 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Clients
         public async Task GetStudentSessions_Success_ReturnSessions()
         {
             // Arrange
-            var expectedSessions = new Fixture().CreateMany<UserCourseParticipant>(5).ToArray();
-            var sessionsResponseList = new ResponseList<UserCourseParticipant>()
+            var expectedSessions = new Fixture().CreateMany<SessionParticipant>(5).ToArray();
+            var sessionsResponseList = new ResponseList<SessionParticipant>()
             {
                 Count = expectedSessions.Count(),
                 Results = expectedSessions
@@ -102,10 +102,10 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Clients
         public async Task GetStudentSessions_EmptyCollection_ReturnSessions()
         {
             // Arrange
-            var sessionsResponseList = new ResponseList<UserCourseParticipant>()
+            var sessionsResponseList = new ResponseList<SessionParticipant>()
             {
                 Count = 0,
-                Results = Array.Empty<UserCourseParticipant>()
+                Results = Array.Empty<SessionParticipant>()
             };
             HttpClientHandlerMock.SetupSend(HttpStatusCode.OK, sessionsResponseList);
             
@@ -175,6 +175,56 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Clients
             
             // Act
             await _learnsterSessionsClient.Invoking(x => x.GetAvailableForStudent(Guid.Empty)).Should().ThrowAsync<Exception>();
+        }
+        
+        [Fact]
+        public async Task GetStudentSessionsHistory_Success_ReturnSessions()
+        {
+            // Arrange
+            var expectedSessions = new Fixture().CreateMany<StudentHistory>(5).ToArray();
+            var sessionsResponseList = new ResponseList<StudentHistory>()
+            {
+                Count = expectedSessions.Count(),
+                Results = expectedSessions
+            };
+            HttpClientHandlerMock.SetupSend(HttpStatusCode.OK, sessionsResponseList);
+            
+            // Act
+            var sessions = await _learnsterSessionsClient.GetStudentSessionsHistory(Guid.Empty);
+            
+            // Assert
+            sessions.Should().NotBeNull();
+            sessions.Should().NotBeEmpty();
+            sessions.Should().BeEquivalentTo(expectedSessions);
+        }
+        
+        [Fact]
+        public async Task GetStudentSessionsHistory_EmptyCollection_ReturnSessions()
+        {
+            // Arrange
+            var sessionsResponseList = new ResponseList<StudentHistory>()
+            {
+                Count = 0,
+                Results = Array.Empty<StudentHistory>()
+            };
+            HttpClientHandlerMock.SetupSend(HttpStatusCode.OK, sessionsResponseList);
+            
+            // Act
+            var sessions = await _learnsterSessionsClient.GetStudentSessionsHistory(Guid.Empty);
+            
+            // Assert
+            sessions.Should().NotBeNull();
+            sessions.Should().BeEmpty();
+        }
+        
+        [Fact]
+        public async Task GetStudentSessionsHistory_InternalServerError_ReturnException()
+        {
+            // Arrange
+            HttpClientHandlerMock.SetupSendWithEmptyResponse(HttpStatusCode.InternalServerError);
+            
+            // Act
+            await _learnsterSessionsClient.Invoking(x => x.GetStudentSessionsHistory(Guid.Empty)).Should().ThrowAsync<Exception>();
         }
     }
 }

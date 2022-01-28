@@ -73,7 +73,7 @@ namespace JAG.Learnster.APIClient.Clients
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<UserCourseParticipant>> GetStudentSessions(Guid studentId)
+        public async Task<IReadOnlyCollection<SessionParticipant>> GetStudentSessions(Guid studentId)
         {
 #if DEBUG
             _logger.LogDebug($"Getting session list for student {studentId}", studentId);
@@ -86,10 +86,31 @@ namespace JAG.Learnster.APIClient.Clients
 
                 if (response.IsSuccessStatusCode)
                     return await response
-                        .DeserializeContent<ResponseList<UserCourseParticipant>>()
+                        .DeserializeContent<ResponseList<SessionParticipant>>()
                         .ContinueWith(x => x.Result.Results);
 
                 throw await ThrowGetException(response, "Student session list", studentId);
+            }
+        }
+        
+        /// <inheritdoc />
+        public async Task<IReadOnlyCollection<StudentHistory>> GetStudentSessionsHistory(Guid studentId)
+        {
+#if DEBUG
+            _logger.LogDebug($"Getting session list for student {studentId}", studentId);
+#endif
+            
+            using (var client = await _httpClientFactory.CreateAuthorizedClient())
+            {
+                var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/history/";
+                var response = await client.GetAsync(requestUri);
+
+                if (response.IsSuccessStatusCode)
+                    return await response
+                        .DeserializeContent<ResponseList<StudentHistory>>()
+                        .ContinueWith(x => x.Result.Results);
+
+                throw await ThrowGetException(response, "Student history", studentId);
             }
         }
     }

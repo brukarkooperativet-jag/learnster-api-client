@@ -7,6 +7,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Options
         public const string SECTION_NAME = "TestLearnsterOptions";
         
         public TestStudentOptions StudentWithCourses { get; set; }
+        public TestStudentOptions StudentWithFinishedCourses { get; set; }
     }
     
     public class TestStudentOptions

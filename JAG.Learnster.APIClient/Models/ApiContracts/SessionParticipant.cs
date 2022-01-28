@@ -8,7 +8,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
     /// <summary>
     /// PublicUserCourseParticipant
     /// </summary>
-    public class UserCourseParticipant
+    public class SessionParticipant
     {
         /// <summary>
         /// Gets or Sets Passed
