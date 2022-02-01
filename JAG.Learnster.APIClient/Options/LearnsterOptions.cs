@@ -1,17 +1,19 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using JetBrains.Annotations;
 
 namespace JAG.Learnster.APIClient.Options
 {
 	/// <summary>
 	/// Setting of learnster client
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.Members)]
 	public class LearnsterOptions
 	{
 		/// <summary>
 		/// Name of setting section
 		/// </summary>
-		public const string SECTION_NAME = "Learnster";
+		public const string SectionName = "Learnster";
 
 		/// <summary>
 		/// Url to learnster
@@ -25,6 +27,12 @@ namespace JAG.Learnster.APIClient.Options
 		[Required]
 		public Guid VendorId { get; set; }
 
+		/// <summary>
+		/// Vendor Id
+		/// </summary>
+		[Required]
+		public string VendorName { get; set; }
+		
 		/// <summary>
 		/// Client Id
 		/// </summary>
@@ -43,7 +51,10 @@ namespace JAG.Learnster.APIClient.Options
 		[Required]
 		public string GrantType { get; set; }
 
-		private Uri _apiV1Url;
+		/// <summary>
+		/// Url to API v1
+		/// </summary>
 		public Uri ApiV1Url => _apiV1Url ??= new Uri(Url, "api/public/v1/");
+		private Uri _apiV1Url;
 	}
 }

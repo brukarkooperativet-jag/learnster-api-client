@@ -51,7 +51,7 @@ namespace JAG.Learnster.APIClient.Clients
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<PossibleChoicesSession>> GetAvailableForStudent(Guid studentId)
+        public async Task<IReadOnlyCollection<PossibleChoicesSession>> GetAvailableForStudent(Guid studentId, bool? isCatalog = null)
         {
 #if DEBUG
             _logger.LogDebug($"Getting session list for student {studentId}", studentId);
@@ -61,6 +61,10 @@ namespace JAG.Learnster.APIClient.Clients
             {
                 var requestUri =
                     $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/sessions/possible-choices/";
+
+                if (isCatalog.HasValue)
+                    requestUri += $"?catalog={isCatalog}";
+                
                 var response = await client.GetAsync(requestUri);
 
                 if (response.IsSuccessStatusCode)

@@ -22,6 +22,7 @@ namespace JAG.Learnster.APIClient.Extensions
             services.AddScoped<ILearnsterSessionsClient, LearnsterSessionsClient>();
             services.AddScoped<ILearnsterStudentsClient, LearnsterStudentsClient>();
             services.AddScoped<ILearnsterHttpClientFactory, LearnsterHttpClientFactory>();
+            services.AddScoped<ILearnsterUrlBuilder, LearnsterUrlBuilder>();
 
             return services;
         }

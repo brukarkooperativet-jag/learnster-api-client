@@ -20,7 +20,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 			Configuration = BuildConfiguration();
 
 			ServiceProvider = new ServiceCollection()
-				.Configure<LearnsterOptions>(Configuration.GetSection(LearnsterOptions.SECTION_NAME))
+				.Configure<LearnsterOptions>(Configuration.GetSection(LearnsterOptions.SectionName))
 				.Configure<TestLearnsterOptions>(Configuration.GetSection(TestLearnsterOptions.SECTION_NAME))
 				.AddHttpClient()
 				.RegisterLearnsterClient()

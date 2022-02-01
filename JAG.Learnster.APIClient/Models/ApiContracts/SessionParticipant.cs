@@ -35,11 +35,12 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         [JsonPropertyName("session")]
         public UserSession Session { get; set; }
 
-        /// <summary>
-        /// Gets or Sets SessionId
-        /// </summary>
-        [JsonPropertyName("session_id")]
-        public Guid? SessionId { get; set; }
+        // /// <summary>
+        // /// Gets or Sets SessionId
+        // /// </summary>
+        // TODO: Test and remove. It not working for user session list. Use Session.Id instead
+        // [JsonPropertyName("session_id")]
+        // public Guid? SessionId { get; set; }
 
         /// <summary>
         /// Gets or Sets AvailableFrom
