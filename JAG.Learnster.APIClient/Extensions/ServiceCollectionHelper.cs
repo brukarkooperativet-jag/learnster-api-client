@@ -17,12 +17,14 @@ namespace JAG.Learnster.APIClient.Extensions
         /// <returns></returns>
         public static IServiceCollection RegisterLearnsterClient(this IServiceCollection services)
         {
+            services.AddScoped<ILearnsterHttpClientFactory, LearnsterHttpClientFactory>();
+            services.AddScoped<ILearnsterUrlBuilder, LearnsterUrlBuilder>();
+            
             services.AddScoped<ILearnsterClient, LearnsterClient>();
             services.AddScoped<ILearnsterAuthClient, LearnsterAuthClient>();
             services.AddScoped<ILearnsterSessionsClient, LearnsterSessionsClient>();
             services.AddScoped<ILearnsterStudentsClient, LearnsterStudentsClient>();
-            services.AddScoped<ILearnsterHttpClientFactory, LearnsterHttpClientFactory>();
-            services.AddScoped<ILearnsterUrlBuilder, LearnsterUrlBuilder>();
+            services.AddScoped<ILearnsterTeamClient, LearnsterTeamClient>();
 
             return services;
         }

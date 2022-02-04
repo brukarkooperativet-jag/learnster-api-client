@@ -1,31 +1,36 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 
 namespace JAG.Learnster.APIClient.Models.ApiContracts
 {
     /// <summary>
     /// PublicAddTeamMember
     /// </summary>
-    public class AddTeamMember
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
+    public class AddTeamMemberResult
     {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
         [JsonPropertyName("id")]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
+        /*
+         TODO: [Bug] We have the field in th contract but they are empty from the learnster API
         /// <summary>
         /// Gets or Sets VendorStudentId
         /// </summary>
         [JsonPropertyName("vendor_student_id")]
-        public Guid? VendorStudentId { get; set; }
+        public Guid StudentId { get; set; }
 
         /// <summary>
         /// Gets or Sets IsManager
         /// </summary>
         [JsonPropertyName("is_manager")]
         public bool? IsManager { get; set; }
+        */
 
         /// <summary>
         /// Gets or Sets Members

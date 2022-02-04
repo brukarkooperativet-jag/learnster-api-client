@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using JAG.Learnster.APIClient.Clients;
 using JAG.Learnster.APIClient.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -9,11 +8,11 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 {
     public class SessionsClientTests : BaseClientTests
     {
-        private readonly LearnsterSessionsClient _learnsterSessionsClient;
+        private readonly ILearnsterSessionsClient _learnsterSessionsClient;
 
         public SessionsClientTests()
         {
-            _learnsterSessionsClient = (LearnsterSessionsClient) ServiceProvider.GetRequiredService<ILearnsterSessionsClient>();
+            _learnsterSessionsClient = ServiceProvider.GetRequiredService<ILearnsterSessionsClient>();
 
         }
 

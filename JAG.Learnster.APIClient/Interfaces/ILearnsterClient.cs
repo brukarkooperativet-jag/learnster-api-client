@@ -14,5 +14,10 @@
         /// Students
         /// </summary>
         ILearnsterStudentsClient Students { get; }
+        
+        /// <summary>
+        /// Teams
+        /// </summary>
+        public ILearnsterTeamClient Teams { get; }
     }
 }

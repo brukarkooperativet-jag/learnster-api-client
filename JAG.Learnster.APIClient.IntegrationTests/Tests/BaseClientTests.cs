@@ -13,7 +13,6 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 	{
 		protected readonly IServiceProvider ServiceProvider;
 		protected readonly IConfiguration Configuration;
-		
 
 		protected BaseClientTests()
 		{
@@ -21,7 +20,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 
 			ServiceProvider = new ServiceCollection()
 				.Configure<LearnsterOptions>(Configuration.GetSection(LearnsterOptions.SectionName))
-				.Configure<TestLearnsterOptions>(Configuration.GetSection(TestLearnsterOptions.SECTION_NAME))
+				.Configure<TestLearnsterOptions>(Configuration.GetSection(TestLearnsterOptions.SectionName))
 				.AddHttpClient()
 				.RegisterLearnsterClient()
 				.BuildServiceProvider();

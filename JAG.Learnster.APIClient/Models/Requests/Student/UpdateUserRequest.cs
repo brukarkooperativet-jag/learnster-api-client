@@ -1,11 +1,13 @@
 ﻿using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 
-namespace JAG.Learnster.APIClient.Models.Requests
+namespace JAG.Learnster.APIClient.Models.Requests.Student
 {
     /// <summary>
-    /// Create student api request
+    /// Update user api request
     /// </summary>
-    public class CreateStudentRequest
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
+    public class UpdateUserRequest
     {
         /// <summary>
         /// First name

@@ -14,10 +14,12 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Clients
         {
             var learnsterSessionsClientMock = new Mock<ILearnsterSessionsClient>();
             var learnsterStudentsClientMock = new Mock<ILearnsterStudentsClient>();
+            var learnsterTeamClientMock = new Mock<ILearnsterTeamClient>();
 
             _learnsterClient = new LearnsterClient(
                 learnsterSessionsClientMock.Object,
-                learnsterStudentsClientMock.Object);
+                learnsterStudentsClientMock.Object,
+                learnsterTeamClientMock.Object);
         }
 
         [Fact]
@@ -35,6 +37,16 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Clients
         {
             // Act
             var studentsClient = _learnsterClient.Students;
+            
+            // Assert
+            studentsClient.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void GetTeamClient_Success_ReturnClient()
+        {
+            // Act
+            var studentsClient = _learnsterClient.Teams;
             
             // Assert
             studentsClient.Should().NotBeNull();

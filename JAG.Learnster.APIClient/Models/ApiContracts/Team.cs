@@ -6,13 +6,13 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
     /// <summary>
     /// PublicAPITeamSerializer
     /// </summary>
-    public class ApiTeamSerializer
+    public class Team
     {
         /// <summary>
         /// Gets or Sets Id
         /// </summary>
         [JsonPropertyName("id")]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Name
@@ -56,17 +56,16 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         [JsonPropertyName("controlled_by_integration")]
         public bool? ControlledByIntegration { get; set; }
 
-        // TODO: FIX ME
-        // /// <summary>
-        // /// Gets or Sets CustomAttributes
-        // /// </summary>
-        // [JsonPropertyName("custom_attributes")]
-        // public CustomAttributes CustomAttributes { get; set; }
+        /// <summary>
+        /// Gets or Sets CustomAttributes
+        /// </summary>
+        [JsonPropertyName("custom_attributes")]
+        public CustomAttributes CustomAttributes { get; set; }
 
         /// <summary>
         /// Gets or Sets SummaryProgress
         /// </summary>
         [JsonPropertyName("summary_progress")]
-        public string SummaryProgress { get; set; }
+        public float SummaryProgress { get; set; }
     }
 }

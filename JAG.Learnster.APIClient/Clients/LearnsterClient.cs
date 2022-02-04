@@ -11,14 +11,16 @@ namespace JAG.Learnster.APIClient.Clients
         /// <inheritdoc />
         public ILearnsterStudentsClient Students { get; }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <inheritdoc />
+        public ILearnsterTeamClient Teams { get; }
+
         public LearnsterClient(ILearnsterSessionsClient sessionsClient,
-                               ILearnsterStudentsClient studentsClient)
+                               ILearnsterStudentsClient studentsClient,
+                               ILearnsterTeamClient teamsClient)
         {
             Sessions = sessionsClient;
             Students = studentsClient;
+            Teams = teamsClient;
         }
     }
 }

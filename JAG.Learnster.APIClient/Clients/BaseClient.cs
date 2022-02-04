@@ -62,6 +62,28 @@ namespace JAG.Learnster.APIClient.Clients
 		}
 
 		/// <summary>
+		/// Log error with arguments and throw exception for PUT request
+		/// </summary>
+		protected async Task<Exception> CreatePutException(HttpResponseMessage response,
+		                                                    string entityName,
+		                                                    params object[] args)
+		{
+			if (response.StatusCode == HttpStatusCode.NotFound)
+			{
+				var notFoundErrorMessage = $"{entityName} resource was not found";
+				
+				_logger.LogError(notFoundErrorMessage, args);
+				throw new NotFoundLearnsterException(notFoundErrorMessage);
+			}
+			
+			// TODO: [REFACTORING] Use model instead of string
+			var errorContent = await response.Content.ReadAsStringAsync();
+			var errorMessageWithDetails = $"{entityName} cannot be updates ({response.StatusCode}): {errorContent}";
+                
+			throw GetLearnsterException(args, errorMessageWithDetails);
+		}
+
+		/// <summary>
 		/// Log error with arguments and throw exception for delete request
 		/// </summary>
 		protected async Task<Exception> CreateDeleteException(HttpResponseMessage response,

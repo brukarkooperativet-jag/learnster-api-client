@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
-using JAG.Learnster.APIClient.Models.Requests;
+using JAG.Learnster.APIClient.Models.Requests.Student;
 using JAG.Learnster.APIClient.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -76,22 +77,44 @@ namespace JAG.Learnster.APIClient.Clients
 		}
 
 		/// <inheritdoc />
-		public async Task<VendorStudent> CreateStudent(CreateUserRequest createUserRequest)
+		public async Task<VendorStudent> CreateStudent(CreateStudentRequest createStudentRequest)
 		{
 #if DEBUG
-			_logger.LogDebug("Creating Learnster student with email {Email}", createUserRequest.User.Email);
+			_logger.LogDebug("Creating Learnster student with email {Email}", createStudentRequest.User.Email);
 #endif
 			
 			using (var client = await _httpClientFactory.CreateAuthorizedClient())
 			{
-				var request = CreateRequestContent(createUserRequest);
+				var request = CreateRequestContent(createStudentRequest);
 				var response = await client.PostAsync($"vendor/{_learnsterOptions.VendorId}/users/students/", request);
 
 				if (response.IsSuccessStatusCode)
 					return await response.DeserializeContent<VendorStudent>();
 
 				// TODO: Test error with long name (>30)
-				throw await CreatePostException(response, "Student", createUserRequest.User.Email);
+				throw await CreatePostException(response, "Student", createStudentRequest.User.Email);
+			}
+		}
+		
+		/// <inheritdoc />
+		public async Task<VendorStudent> UpdateStudent(UpdateStudentRequest updateStudentRequest)
+		{
+#if DEBUG
+			_logger.LogDebug("Updating Learnster student with id {LearnsterId}", updateStudentRequest.StudentId);
+#endif
+			if (updateStudentRequest.StudentId == default)
+				throw new ArgumentException(nameof(updateStudentRequest.StudentId));
+			
+			using (var client = await _httpClientFactory.CreateAuthorizedClient())
+			{
+				var url = $"vendor/{_learnsterOptions.VendorId}/users/students/{updateStudentRequest.StudentId}/";
+				var response = await client.PutAsJsonAsync(url, updateStudentRequest);
+
+				if (response.IsSuccessStatusCode)
+					return await response.DeserializeContent<VendorStudent>();
+				
+				// TODO: Test error with long name (>30)
+				throw await CreatePutException(response, "Student", updateStudentRequest.User.Email);
 			}
 		}
 
@@ -111,6 +134,46 @@ namespace JAG.Learnster.APIClient.Clients
 					return;
 
 				throw await CreateDeleteException(response, "Student", studentId);
+			}
+		}
+		
+		/// <inheritdoc />
+		public Task<VendorStudent> DeactivateStudent(Guid studentId)
+		{
+#if DEBUG
+			_logger.LogDebug("Deactivate Learnster student with id {LearnsterId}", studentId);
+#endif
+
+			return ChangeActiveStatus(studentId, false);
+		}
+
+		/// <inheritdoc />
+		public Task<VendorStudent> ActivateStudent(Guid studentId)
+		{
+#if DEBUG
+			_logger.LogDebug("Deactivate Learnster student with id {LearnsterId}", studentId);
+#endif
+
+			return ChangeActiveStatus(studentId, true);
+		}
+
+		private async Task<VendorStudent> ChangeActiveStatus(Guid studentId, bool isActive)
+		{
+			if (studentId == default)
+				throw new ArgumentException(nameof(studentId));
+
+			using (var client = await _httpClientFactory.CreateAuthorizedClient())
+			{
+				var deactivateModel = new ActivateStatusRequest(isActive);
+				var request = CreateRequestContent(deactivateModel);
+
+				var url = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/";
+				var response = await client.PatchAsync(url, request);
+
+				if (response.IsSuccessStatusCode)
+					return await response.DeserializeContent<VendorStudent>();
+
+				throw await CreatePutException(response, "Student", studentId);
 			}
 		}
 	}
