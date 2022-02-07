@@ -243,5 +243,107 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Clients
                 .Should()
                 .ThrowAsync<Exception>();
         }
+
+        [Fact]
+        public async Task ActivateStudent_Success_ReturnStudent()
+        {
+            // Arrange
+            var expectedUser = new Fixture().Create<VendorStudent>();
+            HttpClientHandlerMock.SetupSend(HttpStatusCode.OK, expectedUser);
+
+            // Act
+            var student = await _learnsterStudentsClient.ActivateStudent(Guid.NewGuid());
+            
+            // Assert
+            student.Should().NotBeNull();
+            student.Should().BeEquivalentTo(expectedUser);
+        }
+
+        [Fact]
+        public async Task ActivateStudent_InternalServerError_ReturnException()
+        {
+            // Arrange
+            HttpClientHandlerMock.SetupSendWithEmptyResponse(HttpStatusCode.InternalServerError);
+            
+            // Act
+            await _learnsterStudentsClient
+                .Invoking(x => x.ActivateStudent(Guid.NewGuid()))
+                .Should()
+                .ThrowAsync<Exception>();
+        }
+        
+        [Fact]
+        public async Task ActivateStudent_NotFound_ReturnNotFoundException()
+        {
+            // Arrange
+            HttpClientHandlerMock.SetupSendWithEmptyResponse(HttpStatusCode.NotFound);
+            
+            // Act
+            await _learnsterStudentsClient
+                .Invoking(x => x.ActivateStudent(Guid.NewGuid()))
+                .Should()
+                .ThrowAsync<NotFoundLearnsterException>();
+        }
+        
+        [Fact]
+        public async Task ActivateStudent_StudentIdIsEmpty_ReturnArgumentException()
+        {
+            // Act
+            await _learnsterStudentsClient
+                .Invoking(x => x.ActivateStudent(Guid.Empty))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task DeactivateStudent_Success_ReturnStudent()
+        {
+            // Arrange
+            var expectedUser = new Fixture().Create<VendorStudent>();
+            HttpClientHandlerMock.SetupSend(HttpStatusCode.OK, expectedUser);
+
+            // Act
+            var student = await _learnsterStudentsClient.DeactivateStudent(Guid.NewGuid());
+            
+            // Assert
+            student.Should().NotBeNull();
+            student.Should().BeEquivalentTo(expectedUser);
+        }
+
+        [Fact]
+        public async Task DeactivateStudent_InternalServerError_ReturnException()
+        {
+            // Arrange
+            HttpClientHandlerMock.SetupSendWithEmptyResponse(HttpStatusCode.InternalServerError);
+            
+            // Act
+            await _learnsterStudentsClient
+                .Invoking(x => x.ActivateStudent(Guid.NewGuid()))
+                .Should()
+                .ThrowAsync<Exception>();
+        }
+        
+        [Fact]
+        public async Task DeactivateStudent_NotFound_ReturnNotFoundException()
+        {
+            // Arrange
+            HttpClientHandlerMock.SetupSendWithEmptyResponse(HttpStatusCode.NotFound);
+            
+            // Act
+            await _learnsterStudentsClient
+                .Invoking(x => x.ActivateStudent(Guid.NewGuid()))
+                .Should()
+                .ThrowAsync<NotFoundLearnsterException>();
+        }
+        
+        [Fact]
+        public async Task DeactivateStudent_StudentIdIsEmpty_ReturnArgumentException()
+        {
+            // Act
+            await _learnsterStudentsClient
+                .Invoking(x => x.ActivateStudent(Guid.Empty))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
     }
 }

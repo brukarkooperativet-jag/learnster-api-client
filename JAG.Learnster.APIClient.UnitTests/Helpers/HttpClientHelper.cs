@@ -26,9 +26,9 @@ namespace JAG.Learnster.APIClient.UnitTests.Helpers
                     Content = new StringContent(JsonSerializer.Serialize(resultObject))
                 });
         }
-        
+
         public static void SetupSendWithEmptyResponse(this Mock<HttpClientHandler> handlerMock,
-                                              HttpStatusCode httpStatusCode)
+                                                      HttpStatusCode httpStatusCode)
         {
             handlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",

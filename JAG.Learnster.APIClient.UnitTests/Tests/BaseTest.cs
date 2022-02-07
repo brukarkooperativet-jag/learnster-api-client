@@ -11,6 +11,7 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests
         protected readonly LearnsterOptions LearnsterOptions;
         protected readonly Mock<IOptions<LearnsterOptions>> OptionMock;
         protected readonly Mock<HttpClientHandler> HttpClientHandlerMock;
+        protected readonly Fixture Fixture;
 
         public BaseTest()
         {
@@ -19,6 +20,8 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests
             OptionMock.Setup(x => x.Value).Returns(LearnsterOptions);
             
             HttpClientHandlerMock = new Mock<HttpClientHandler>();
+
+            Fixture = new Fixture();
         }
     }
 }
