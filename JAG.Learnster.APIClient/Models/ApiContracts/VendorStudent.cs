@@ -12,13 +12,13 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Id
         /// </summary>
         [JsonPropertyName("id")]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or Sets Vendor
         /// </summary>
         [JsonPropertyName("vendor")]
-        public Guid? Vendor { get; set; }
+        public Guid Vendor { get; set; }
 
         /// <summary>
         /// Gets or Sets User
@@ -30,7 +30,7 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
         /// Gets or Sets Active
         /// </summary>
         [JsonPropertyName("active")]
-        public bool? Active { get; set; }
+        public bool Active { get; set; }
 
         /// <summary>
         /// Gets or Sets CreatedDate

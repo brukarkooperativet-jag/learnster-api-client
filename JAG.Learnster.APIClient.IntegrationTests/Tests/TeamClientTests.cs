@@ -79,7 +79,6 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
             var currentTimeString = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             var createTeamRequest = new CreateTeamRequest()
             {
-                Id = Guid.NewGuid(),
                 Name = $"IntegrationTest_{currentTimeString}",
                 Description = nameof(CreateTeam_Success_ReturnCreatedTeam),
                 AllowDiscussion = true,
@@ -95,7 +94,6 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
                 team.Should().NotBeNull();
                 team.Name.Should().Be(createTeamRequest.Name);
                 team.Description.Should().Be(createTeamRequest.Description);
-                team.Id.Should().Be(createTeamRequest.Id.Value);
                 team.AllowDiscussion.Should().Be(createTeamRequest.AllowDiscussion);
                 team.ControlledByIntegration.Should().Be(createTeamRequest.ControlledByIntegration);
             }
@@ -112,7 +110,6 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
             var currentTimeString = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             var createTeamRequest = new CreateTeamRequest()
             {
-                Id = Guid.NewGuid(),
                 Name = $"IntegrationTest_{currentTimeString}",
                 Description = nameof(DeleteTeam_Success_DeleteTeamInLearnster),
                 AllowDiscussion = true,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Extensions;
@@ -8,6 +9,7 @@ using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests.Student;
 using JAG.Learnster.APIClient.Options;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -62,7 +64,7 @@ namespace JAG.Learnster.APIClient.Clients
 				_logger.LogDebug("Getting student list from Learnster");
 #endif
 
-				var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students?search={searchString}";
+				var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students/?search={searchString}";
 				var response = await client.GetAsync(requestUrl);
 
 				if (response.IsSuccessStatusCode)
@@ -70,6 +72,29 @@ namespace JAG.Learnster.APIClient.Clients
 					return await response
 						.DeserializeContent<ResponseList<VendorStudent>>()
 						.ContinueWith(x => x.Result.Results);
+				}
+				
+				throw await ThrowGetException(response, "Student by email");
+			}
+		}
+
+		/// <inheritdoc />
+		public async Task<VendorStudent> GetStudentByPersonalId(string personalId)
+		{
+			using (var client = await _httpClientFactory.CreateAuthorizedClient())
+			{
+#if DEBUG
+				_logger.LogDebug("Getting student list from Learnster");
+#endif
+
+				var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students/?personal_id={personalId}";
+				var response = await client.GetAsync(requestUrl);
+
+				if (response.IsSuccessStatusCode)
+				{
+					return await response
+						.DeserializeContent<ResponseList<VendorStudent>>()
+						.ContinueWith(x => x.Result.Results.FirstOrDefault());
 				}
 				
 				throw await ThrowGetException(response, "Student by email");

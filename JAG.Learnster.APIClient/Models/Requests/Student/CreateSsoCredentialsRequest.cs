@@ -1,19 +1,13 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace JAG.Learnster.APIClient.Models.ApiContracts
+namespace JAG.Learnster.APIClient.Models.Requests.Student
 {
     /// <summary>
     /// PublicSSOCredentialsShort
     /// </summary>
-    public class SsoCredentialsShort
+    public class CreateSsoCredentialsRequest
     {
-        /// <summary>
-        /// Gets or Sets Id
-        /// </summary>
-        [JsonPropertyName("id")]
-        public Guid? Id { get; set; }
-
         // TODO: Use enum instead
         /// <summary>
         /// Gets or Sets Provider

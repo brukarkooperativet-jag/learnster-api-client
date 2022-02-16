@@ -10,15 +10,9 @@ namespace JAG.Learnster.APIClient.Models.ApiContracts
     public class TeamManagersBulk
     {
         /// <summary>
-        /// Gets or Sets UpdateList
-        /// </summary>
-        [JsonPropertyName("update_list")]
-        public List<Guid?> UpdateList { get; set; }
-
-        /// <summary>
         /// Gets or Sets RemoveList
         /// </summary>
         [JsonPropertyName("remove_list")]
-        public List<Guid?> RemoveList { get; set; }
+        public IList<Guid> RemoveList { get; set; }
     }
 }

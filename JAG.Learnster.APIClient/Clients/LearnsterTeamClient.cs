@@ -58,7 +58,7 @@ namespace JAG.Learnster.APIClient.Clients
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
 #if DEBUG
-                _logger.LogDebug("Getting team list from Learnster");
+                _logger.LogDebug("Getting team by Id from Learnster");
 #endif
 
                 var response = await client.GetAsync($"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/");
@@ -66,7 +66,7 @@ namespace JAG.Learnster.APIClient.Clients
                 if (response.IsSuccessStatusCode)
                     return await response.DeserializeContent<Team>();
 
-                throw await ThrowGetException(response, "Team list");
+                throw await ThrowGetException(response, "Team");
             }
         }
         
@@ -76,7 +76,7 @@ namespace JAG.Learnster.APIClient.Clients
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
 #if DEBUG
-                _logger.LogDebug("Getting team list from Learnster");
+                _logger.LogDebug("Search teams from Learnster");
 #endif
 
                 var url = $"vendor/{_learnsterOptions.VendorId}/teams/?name={name}";
@@ -87,7 +87,7 @@ namespace JAG.Learnster.APIClient.Clients
                         .DeserializeContent<ResponseList<Team>>()
                         .ContinueWith(x => x.Result.Results);
 
-                throw await ThrowGetException(response, "Team list");
+                throw await ThrowGetException(response, "Search team");
             }
         }
         
@@ -95,6 +95,10 @@ namespace JAG.Learnster.APIClient.Clients
         [ItemCanBeNull]
         public Task<Team> GetTeamByName(string name)
         {
+#if DEBUG
+            _logger.LogDebug("Getting team by Name from Learnster");
+#endif
+            
             return SearchTeamByName(name).ContinueWith(x => x.Result.FirstOrDefault());
         }
         
@@ -161,26 +165,9 @@ namespace JAG.Learnster.APIClient.Clients
             }
         }
 
-        // /// <inheritdoc/>
-        // public async Task<AddTeamMemberResult> AddMember(string teamName,
-        //                                                  Guid studentId,
-        //                                                  bool isManager = false)
-        // {
-        //     var team = await GetTeamByName(teamName);
-        //
-        //     if (team == null)
-        //     {
-        //         _logger.LogError("Team {TeamName} cannot be found", teamName);
-        //         throw new NotFoundLearnsterException($"Team {teamName} cannot be found");
-        //     }
-        //
-        //     return await AddMember(team.Id, studentId, isManager);
-        // }
-        
-        
         /// <inheritdoc/>
         public async Task<RemoveTeamMemberResult> RemoveMember(Guid teamId,
-                                                            Guid studentId)
+                                                               Guid studentId)
         {
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
@@ -201,20 +188,121 @@ namespace JAG.Learnster.APIClient.Clients
                 throw await CreatePostException(response, "Create team");
             }
         }
+        
+        
+        public Task<IReadOnlyCollection<VendorStudent>> GetMembers(Guid teamId)
+        {
+            return GetTeamParticipants(teamId, false);
+        }
+        
+        public Task<IReadOnlyCollection<VendorStudent>> GetManagers(Guid teamId)
+        {
+            return GetTeamParticipants(teamId, true);
+        }
 
-        // /// <inheritdoc/>
-        // public async Task<AddTeamMemberResult> RemoveMember(string teamName,
-        //                                                     Guid studentId)
-        // {
-        //     var team = await GetTeamByName(teamName);
-        //
-        //     if (team == null)
-        //     {
-        //         _logger.LogError("Team {TeamName} cannot be found", teamName);
-        //         throw new NotFoundLearnsterException($"Team {teamName} cannot be found");
-        //     }
-        //
-        //     return await RemoveMember(team.Id, studentId);
-        // }
+        private async Task<IReadOnlyCollection<VendorStudent>> GetTeamParticipants(Guid teamId, bool isAdmin)
+        {
+            using (var client = await _httpClientFactory.CreateAuthorizedClient())
+            {
+#if DEBUG
+                _logger.LogDebug("Getting participants from Learnster by TeamId");
+#endif
+
+                var requestUrl = isAdmin
+                        ? $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/managers/"
+                        : $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/"
+                    ;
+                var response = await client.GetAsync(requestUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response
+                        .DeserializeContent<ResponseList<VendorStudent>>()
+                        .ContinueWith(x => x.Result.Results);
+                }
+                
+                throw await ThrowGetException(response, "Member of team");
+            }
+        }
+
+        public async Task RemoveMembers(Guid teamId, IReadOnlyCollection<Guid> studentIds)
+        {
+            if (studentIds == null || studentIds.Count == 0)
+                return;
+            
+            using (var client = await _httpClientFactory.CreateAuthorizedClient())
+            {
+#if DEBUG
+                _logger.LogDebug("Deleting members from Learnster");
+#endif
+
+                // TODO: Check bulk length, 100 Max
+                var requestBody = new TeamMembersBulk()
+                {
+                    RemoveList = studentIds.ToList()
+                };
+                
+                var requestUrl = $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/bulk/players/";
+                var response = await client.PostAsJsonAsync(requestUrl, requestBody);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+                
+                throw await ThrowGetException(response, "Member of team");
+            }
+        }
+        
+        public async Task RemoveManagers(Guid teamId, IReadOnlyCollection<Guid> managerIds)
+        {
+            if (managerIds == null || managerIds.Count == 0)
+                return;
+            
+            using (var client = await _httpClientFactory.CreateAuthorizedClient())
+            {
+#if DEBUG
+                _logger.LogDebug("Deleting managers from Learnster");
+#endif
+
+                // TODO: Check bulk length, 100 Max
+                var requestBody = new TeamManagersBulk()
+                {
+                    RemoveList = managerIds.ToList(),
+                };
+                
+                var requestUrl = $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/bulk/managers/";
+                var response = await client.PostAsJsonAsync(requestUrl, requestBody);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+                
+                throw await ThrowGetException(response, "Member of team");
+            }
+        }
+        
+        public async Task<IReadOnlyCollection<TeamMinimal>> GetTeamsByStudent(Guid studentId)
+        {
+            using (var client = await _httpClientFactory.CreateAuthorizedClient())
+            {
+#if DEBUG
+                _logger.LogDebug("Deleting managers from Learnster");
+#endif
+
+                var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/teams/";
+                var response = await client.GetAsync(requestUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response
+                        .DeserializeContent<ResponseList<TeamMinimal>>()
+                        .ContinueWith(x => x.Result.Results);
+                }
+                
+                throw await ThrowGetException(response, "Teams for member");
+            }
+        }
     }
 }

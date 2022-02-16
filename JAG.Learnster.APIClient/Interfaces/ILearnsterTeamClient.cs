@@ -62,18 +62,6 @@ namespace JAG.Learnster.APIClient.Interfaces
                                             Guid studentId,
                                             bool isManager = false);
 
-        // /// <summary>
-        // /// Add student to a team by team name
-        // /// </summary>
-        // /// <param name="teamName"></param>
-        // /// <param name="studentId">Student Id</param>
-        // /// <param name="isAdmin">Is Admin</param>
-        // /// <returns></returns>
-        // /// <exception cref="Exception"></exception>
-        // Task<AddTeamMemberResult> AddMember(string teamName,
-        //                                     Guid studentId,
-        //                                     bool isAdmin = false);
-
         /// <summary>
         /// Remove student from a team
         /// </summary>
@@ -84,14 +72,41 @@ namespace JAG.Learnster.APIClient.Interfaces
         Task<RemoveTeamMemberResult> RemoveMember(Guid teamId,
                                                   Guid studentId);
 
-        // /// <summary>
-        // /// Remove student from a team by team name
-        // /// </summary>
-        // /// <param name="teamName"></param>
-        // /// <param name="studentId">Student Id</param>
-        // /// <returns></returns>
-        // /// <exception cref="Exception"></exception>
-        // Task<AddTeamMemberResult> RemoveMember(string teamName,
-        //                                        Guid studentId);
+        /// <summary>
+        /// Get all members for the team
+        /// </summary>
+        /// <param name="teamId"></param>
+        /// <returns></returns>
+        Task<IReadOnlyCollection<VendorStudent>> GetMembers(Guid teamId);
+
+        /// <summary>
+        /// Get all managers for the team
+        /// </summary>
+        /// <param name="teamId"></param>
+        /// <returns></returns>
+        Task<IReadOnlyCollection<VendorStudent>> GetManagers(Guid teamId);
+
+        /// <summary>
+        /// Remove few member from the team
+        /// </summary>
+        /// <param name="teamId"></param>
+        /// <param name="studentIds"></param>
+        /// <returns></returns>
+        Task RemoveMembers(Guid teamId, IReadOnlyCollection<Guid> studentIds);
+
+        /// <summary>
+        /// Remove few managers from the team
+        /// </summary>
+        /// <param name="teamId"></param>
+        /// <param name="managerIds"></param>
+        /// <returns></returns>
+        Task RemoveManagers(Guid teamId, IReadOnlyCollection<Guid> managerIds);
+
+        /// <summary>
+        /// Get team list for the student
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
+        Task<IReadOnlyCollection<TeamMinimal>> GetTeamsByStudent(Guid studentId);
     }
 }

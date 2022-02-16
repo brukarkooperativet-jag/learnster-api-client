@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using JAG.Learnster.APIClient.Models.ApiContracts;
 using JetBrains.Annotations;
 
 namespace JAG.Learnster.APIClient.Models.Requests.Student
@@ -14,5 +16,18 @@ namespace JAG.Learnster.APIClient.Models.Requests.Student
         /// </summary>
         [JsonPropertyName("user")]
         public CreateUserRequest User { get; set; }
+
+        /// <summary>
+        /// Gets or Sets SsoCredentials
+        /// </summary>
+        [JsonPropertyName("sso_credentials")]
+        public List<CreateSsoCredentialsRequest> SsoCredentials { get; set; }
+
+        /// <summary>
+        /// Controlled by integration
+        /// </summary>
+        [JsonPropertyName("controlled_by_integration")]
+        public bool ControlledByIntegration { get; set; } = true;
+
     }
 }

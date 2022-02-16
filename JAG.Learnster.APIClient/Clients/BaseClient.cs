@@ -44,7 +44,7 @@ namespace JAG.Learnster.APIClient.Clients
 			var errorContent = await response.Content.ReadAsStringAsync();
 			var errorMessageWithDetails = $"Learnster client can't get {entityName} ({response.StatusCode}): {errorContent}";
                 
-			throw GetLearnsterException(args, errorMessageWithDetails);
+			throw GetLearnsterException(errorMessageWithDetails);
 		}
 		
 		/// <summary>
@@ -58,7 +58,7 @@ namespace JAG.Learnster.APIClient.Clients
 			var errorContent = await response.Content.ReadAsStringAsync();
 			var errorMessageWithDetails = $"{entityName} cannot be created ({response.StatusCode}): {errorContent}";
                 
-			throw GetLearnsterException(args, errorMessageWithDetails);
+			throw GetLearnsterException(errorMessageWithDetails);
 		}
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace JAG.Learnster.APIClient.Clients
 			var errorContent = await response.Content.ReadAsStringAsync();
 			var errorMessageWithDetails = $"{entityName} cannot be updates ({response.StatusCode}): {errorContent}";
                 
-			throw GetLearnsterException(args, errorMessageWithDetails);
+			throw GetLearnsterException(errorMessageWithDetails);
 		}
 
 		/// <summary>
@@ -94,13 +94,12 @@ namespace JAG.Learnster.APIClient.Clients
 			var errorContent = await response.Content.ReadAsStringAsync();
 			var errorMessageWithDetails = $"{entityName} cannot be deleted ({response.StatusCode}): {errorContent}";
                 
-			throw GetLearnsterException(args, errorMessageWithDetails);
+			throw GetLearnsterException(errorMessageWithDetails);
 		}
 
-		private Exception GetLearnsterException(object[] args,
-		                                    string errorMessageWithDetails)
+		private Exception GetLearnsterException(string errorMessageWithDetails)
 		{
-			_logger.LogError(errorMessageWithDetails, args);
+			_logger.LogError(errorMessageWithDetails);
 			throw new LearnsterException(errorMessageWithDetails);
 		}
 

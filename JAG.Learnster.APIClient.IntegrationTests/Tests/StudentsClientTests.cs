@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using JAG.Learnster.APIClient.Interfaces;
+using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests.Student;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -32,6 +34,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 		{
 			// Arrange
 			var currentTimeString = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+			var personalId = Guid.NewGuid().ToString();
 			var newStudent = new CreateStudentRequest()
 			{
 				User = new CreateUserRequest()
@@ -39,8 +42,16 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 					Email = $"user-{currentTimeString}@integrated.test",
 					FirstName = $"User_{currentTimeString}",
 					LastName = "Test",
-					PersonalId = Guid.NewGuid().ToString()
+					PersonalId = personalId
 				},
+				SsoCredentials = new List<CreateSsoCredentialsRequest>()
+				{
+					new CreateSsoCredentialsRequest()
+					{
+						Provider = "AzureOpenID",
+						ProviderCredentials = personalId
+					}
+				}
 			};
 
 			// Act
@@ -51,7 +62,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 				// Assert
 				createdStudent.Should().NotBeNull();
 				createdStudent.User.Email.Should().Be(newStudent.User.Email);
-				createdStudent.Id.Should().NotBeNull();
+				createdStudent.Id.Should().NotBe(Guid.Empty);
 				createdStudent.User.FirstName.Should().Be(newStudent.User.FirstName);
 				createdStudent.User.LastName.Should().Be(newStudent.User.LastName);
 				createdStudent.User.PersonalId.Should().Be(newStudent.User.PersonalId);
@@ -59,7 +70,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 			finally
 			{
 				// Clean up
-				await _client.DeleteStudent(createdStudent.Id!.Value);
+				await _client.DeleteStudent(createdStudent.Id);
 			}
 		}
 		
@@ -89,7 +100,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 			createdStudent.User.LastName.Should().Be(updateStudent.User.LastName);
 			createdStudent.User.PersonalId.Should().NotBeNullOrWhiteSpace();
 		}
-		
+
 		[Fact]
 		public async Task ActivateAndDeactivateStudent_UserExist_ReturnUser()
 		{
@@ -111,6 +122,19 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 			// Assert #2
 			activatedStudent.Should().NotBeNull();
 			activatedStudent.Active.Should().BeTrue("Student is activated");
+		}
+		
+		[Fact]
+		public async Task GetStudentByPersonalId_UserIsExist_ReturnStudent()
+		{
+			// Arrange
+			var personalId = new Guid("000887b8-4f96-4c86-8519-493ac755c975");
+			
+			// Act
+			var student = await _client.GetStudentByPersonalId(personalId.ToString());
+			
+			// Assert
+			student.Should().NotBeNull();
 		}
 	}
 }

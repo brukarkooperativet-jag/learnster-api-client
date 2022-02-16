@@ -5,6 +5,7 @@ using JAG.Learnster.APIClient.Exceptions;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests;
 using JAG.Learnster.APIClient.Models.Requests.Student;
+using JetBrains.Annotations;
 
 namespace JAG.Learnster.APIClient.Interfaces
 {
@@ -27,6 +28,14 @@ namespace JAG.Learnster.APIClient.Interfaces
         /// <returns></returns>
         Task<IReadOnlyCollection<VendorStudent>> SearchStudents(string searchString);
 
+        /// <summary>
+        /// Get student by personal Id
+        /// </summary>
+        /// <param name="personalId"></param>
+        /// <returns></returns>
+        [ItemCanBeNull]
+        Task<VendorStudent> GetStudentByPersonalId(string personalId);
+        
         /// <summary>
         /// Create user and student
         /// </summary>

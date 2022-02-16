@@ -8,12 +8,6 @@ namespace JAG.Learnster.APIClient.Models.Requests.Team
     public class CreateTeamRequest
     {
         /// <summary>
-        /// Gets or Sets Id
-        /// </summary>
-        [JsonPropertyName("id")]
-        public Guid? Id { get; set; }
-
-        /// <summary>
         /// Gets or Sets Name
         /// </summary>
         [JsonPropertyName("name")]
