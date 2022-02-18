@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Constants;
 using JAG.Learnster.APIClient.Exceptions;
+using JAG.Learnster.APIClient.Extensions;
+using JAG.Learnster.APIClient.Models;
 using Microsoft.Extensions.Logging;
 
 namespace JAG.Learnster.APIClient.Clients
@@ -23,92 +25,67 @@ namespace JAG.Learnster.APIClient.Clients
 		}
 
 		/// <summary>
-		/// Log error and throw exception for not success learnster response 
+		/// Log error and throw exeption if responste status is not success
 		/// </summary>
-		protected async Task<Exception> ThrowGetException(HttpResponseMessage response,
-		                                                  string entityName,
-		                                                  params object[] args)
+		/// <param name="response"></param>
+		/// <param name="errorMessage"></param>
+		/// <exception cref="Exception"></exception>
+		protected async Task GetActionResult(HttpResponseMessage response,
+		                                     string errorMessage)
+		{
+			if (response.IsSuccessStatusCode)
+				return;
+
+			throw await GetException(response, errorMessage, s => new LearnsterException(s));
+		}
+
+		protected Task<TResult> GetResult<TResult>(HttpResponseMessage response,
+		                                           string errorMessage)
+		{
+			return GetResult<TResult>(response, errorMessage, str => new LearnsterException(str));
+		}
+
+		protected async Task<TResult> GetResult<TResult>(HttpResponseMessage response,
+		                                                  string errorMessage,
+		                                                  Func<string, Exception> exceptionFunc)
+		{
+			if (response.IsSuccessStatusCode)
+				return await response.DeserializeContent<TResult>();
+
+			throw await GetException(response, errorMessage, exceptionFunc);
+		}
+
+		private async Task<Exception> GetException(HttpResponseMessage response,
+		                                           string errorMessage,
+		                                           Func<string, Exception> exceptionFunc)
 		{
 			if (response.StatusCode == HttpStatusCode.NotFound)
 			{
-				var notFoundErrorMessage = $"{entityName} resource was not found";
-				
-				_logger.LogError(notFoundErrorMessage, args);
-				throw new NotFoundLearnsterException(notFoundErrorMessage);
+				_logger.LogError($"{errorMessage}. Resource cannot be found.");
+				throw new NotFoundLearnsterException($"{errorMessage}. Resource cannot be found.");
 			}
-			
-			// TODO: [REFACTORING] Use model instead of string
-			var errorContent = await response.Content.ReadAsStringAsync();
-			var errorMessageWithDetails = $"Learnster client can't get {entityName} ({response.StatusCode}): {errorContent}";
-                
-			throw GetLearnsterException(errorMessageWithDetails);
-		}
-		
-		/// <summary>
-		/// Log error with arguments and throw exception for Post request
-		/// </summary>
-		protected async Task<Exception> CreatePostException(HttpResponseMessage response,
-		                                                   string entityName,
-		                                                   params object[] args)
-		{
-			// TODO: [REFACTORING] Use model instead of string
-			var errorContent = await response.Content.ReadAsStringAsync();
-			var errorMessageWithDetails = $"{entityName} cannot be created ({response.StatusCode}): {errorContent}";
-                
-			throw GetLearnsterException(errorMessageWithDetails);
-		}
 
-		/// <summary>
-		/// Log error with arguments and throw exception for PUT request
-		/// </summary>
-		protected async Task<Exception> CreatePutException(HttpResponseMessage response,
-		                                                    string entityName,
-		                                                    params object[] args)
-		{
-			if (response.StatusCode == HttpStatusCode.NotFound)
+			if (response.StatusCode == HttpStatusCode.BadRequest)
 			{
-				var notFoundErrorMessage = $"{entityName} resource was not found";
+				ErrorResponse errorModel; 
+
+				try
+				{
+					errorModel = await response.DeserializeContent<ErrorResponse>();
+				}
+				catch (Exception e)
+				{
+					throw new LearnsterException($"{errorMessage} ({response.StatusCode})." +
+					                             $" Server response cannot be processed: {e.Message}");
+				}
+			
+				var combinedErrorMessage = $"{errorMessage} ({response.StatusCode}): {errorModel}";
 				
-				_logger.LogError(notFoundErrorMessage, args);
-				throw new NotFoundLearnsterException(notFoundErrorMessage);
+				_logger.LogError(combinedErrorMessage);
+				throw exceptionFunc(combinedErrorMessage);
 			}
 			
-			// TODO: [REFACTORING] Use model instead of string
-			var errorContent = await response.Content.ReadAsStringAsync();
-			var errorMessageWithDetails = $"{entityName} cannot be updates ({response.StatusCode}): {errorContent}";
-                
-			throw GetLearnsterException(errorMessageWithDetails);
-		}
-
-		/// <summary>
-		/// Log error with arguments and throw exception for delete request
-		/// </summary>
-		protected async Task<Exception> CreateDeleteException(HttpResponseMessage response,
-		                                                    string entityName,
-		                                                    params object[] args)
-		{
-			// TODO: [REFACTORING] Use model instead of string
-			var errorContent = await response.Content.ReadAsStringAsync();
-			var errorMessageWithDetails = $"{entityName} cannot be deleted ({response.StatusCode}): {errorContent}";
-                
-			throw GetLearnsterException(errorMessageWithDetails);
-		}
-
-		private Exception GetLearnsterException(string errorMessageWithDetails)
-		{
-			_logger.LogError(errorMessageWithDetails);
-			throw new LearnsterException(errorMessageWithDetails);
-		}
-
-		/// <summary>
-		/// Create string content for http client
-		/// </summary>
-		protected StringContent CreateRequestContent(object contentObject)
-		{
-			return new StringContent(
-				JsonSerializer.Serialize(contentObject),
-				Encoding.UTF8,
-				ClientConstants.ApplicationJsonContentType);
+			throw exceptionFunc($"{errorMessage} ({response.StatusCode}).");
 		}
 	}
 }

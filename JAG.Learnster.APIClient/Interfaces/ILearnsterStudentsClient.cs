@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Exceptions;
 using JAG.Learnster.APIClient.Models.ApiContracts;
-using JAG.Learnster.APIClient.Models.Requests;
 using JAG.Learnster.APIClient.Models.Requests.Student;
 using JetBrains.Annotations;
 

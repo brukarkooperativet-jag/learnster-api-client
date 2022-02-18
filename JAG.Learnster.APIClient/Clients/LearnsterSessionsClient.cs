@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
@@ -40,10 +39,10 @@ namespace JAG.Learnster.APIClient.Clients
                 var requestUri = $"vendor/{_learnsterOptions.VendorId}/sessions/";
                 var response = await client.GetAsync(requestUri);
 
-                if (response.IsSuccessStatusCode)
-                    return (await response.DeserializeContent<ResponseList<SessionShortWithAvatar>>()).Results;
-
-                throw await ThrowGetException(response, "Session list");
+                var result = await GetResult<ResponseList<SessionShortWithAvatar>>(
+                    response, "Can't get session list");
+                
+                return result.Results;
             }
         }
 
@@ -61,15 +60,13 @@ namespace JAG.Learnster.APIClient.Clients
 
                 if (isCatalog.HasValue)
                     requestUri += $"?catalog={isCatalog}";
-                
+
                 var response = await client.GetAsync(requestUri);
 
-                if (response.IsSuccessStatusCode)
-                    return await response
-                        .DeserializeContent<ResponseList<PossibleChoicesSession>>()
-                        .ContinueWith(x => x.Result.Results);
-
-                throw await ThrowGetException(response, "Available session list for student", studentId);
+                var result = await GetResult<ResponseList<PossibleChoicesSession>>(
+                    response, $"Can't get available sessions for student {studentId}");
+                
+                return result.Results;
             }
         }
 
@@ -85,12 +82,10 @@ namespace JAG.Learnster.APIClient.Clients
                 var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/sessions/";
                 var response = await client.GetAsync(requestUri);
 
-                if (response.IsSuccessStatusCode)
-                    return await response
-                        .DeserializeContent<ResponseList<SessionParticipant>>()
-                        .ContinueWith(x => x.Result.Results);
-
-                throw await ThrowGetException(response, "Student session list", studentId);
+                var result = await GetResult<ResponseList<SessionParticipant>>(
+                    response, $"Can't get student sessions for student {studentId}");
+                
+                return result.Results;
             }
         }
         
@@ -106,12 +101,10 @@ namespace JAG.Learnster.APIClient.Clients
                 var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/history/";
                 var response = await client.GetAsync(requestUri);
 
-                if (response.IsSuccessStatusCode)
-                    return await response
-                        .DeserializeContent<ResponseList<StudentHistory>>()
-                        .ContinueWith(x => x.Result.Results);
-
-                throw await ThrowGetException(response, "Student history", studentId);
+                var result = await GetResult<ResponseList<StudentHistory>>(
+                    response, $"Can't get student session history for student {studentId}");
+                
+                return result.Results;
             }
         }
     }

@@ -8,7 +8,6 @@ using JAG.Learnster.APIClient.Clients;
 using JAG.Learnster.APIClient.Exceptions;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
-using JAG.Learnster.APIClient.Models.Requests;
 using JAG.Learnster.APIClient.Models.Requests.Student;
 using JAG.Learnster.APIClient.UnitTests.Helpers;
 using Microsoft.Extensions.Logging.Abstractions;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
@@ -42,58 +41,44 @@ namespace JAG.Learnster.APIClient.Clients
 
 				var response = await client.GetAsync($"vendor/{_learnsterOptions.VendorId}/users/students/");
 
-				if (response.IsSuccessStatusCode)
-						return await response
-							.DeserializeContent<ResponseList<VendorStudent>>()
-							.ContinueWith(x => x.Result.Results);
-
-				throw await ThrowGetException(response, "Student list");
+				var result = await GetResult<ResponseList<VendorStudent>>(response, "Can't get student list");
+				return result.Results;
 			}
 		}
 
 		/// <inheritdoc />
 		public async Task<IReadOnlyCollection<VendorStudent>> SearchStudents(string searchString)
 		{
-			using (var client = await _httpClientFactory.CreateAuthorizedClient())
-			{
 #if DEBUG
-				_logger.LogDebug("Getting student list from Learnster");
+			_logger.LogDebug("Getting student list from Learnster");
 #endif
 
+			using (var client = await _httpClientFactory.CreateAuthorizedClient())
+			{
 				var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students/?search={searchString}";
 				var response = await client.GetAsync(requestUrl);
 
-				if (response.IsSuccessStatusCode)
-				{
-					return await response
-						.DeserializeContent<ResponseList<VendorStudent>>()
-						.ContinueWith(x => x.Result.Results);
-				}
-				
-				throw await ThrowGetException(response, "Student by email");
+				var result = await GetResult<ResponseList<VendorStudent>>(
+					response, $"Student searching '{searchString}' has been failed");
+				return result.Results;
 			}
 		}
 
 		/// <inheritdoc />
 		public async Task<VendorStudent> GetStudentByPersonalId(string personalId)
 		{
+#if DEBUG
+			_logger.LogDebug("Getting student list from Learnster");
+#endif
+			
 			using (var client = await _httpClientFactory.CreateAuthorizedClient())
 			{
-#if DEBUG
-				_logger.LogDebug("Getting student list from Learnster");
-#endif
-
 				var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students/?personal_id={personalId}";
 				var response = await client.GetAsync(requestUrl);
-
-				if (response.IsSuccessStatusCode)
-				{
-					return await response
-						.DeserializeContent<ResponseList<VendorStudent>>()
-						.ContinueWith(x => x.Result.Results.FirstOrDefault());
-				}
 				
-				throw await ThrowGetException(response, "Student by email");
+				var result = await GetResult<ResponseList<VendorStudent>>(response,
+					$"Can't get student with PersonalId {personalId}");
+				return result.Results.FirstOrDefault();
 			}
 		}
 
@@ -106,14 +91,15 @@ namespace JAG.Learnster.APIClient.Clients
 			
 			using (var client = await _httpClientFactory.CreateAuthorizedClient())
 			{
-				var request = CreateRequestContent(createStudentRequest);
-				var response = await client.PostAsync($"vendor/{_learnsterOptions.VendorId}/users/students/", request);
+				var response = await client.PostAsJsonAsync($"vendor/{_learnsterOptions.VendorId}/users/students/", createStudentRequest);
 
-				if (response.IsSuccessStatusCode)
-					return await response.DeserializeContent<VendorStudent>();
-
+				var errorMessage = string.IsNullOrWhiteSpace(createStudentRequest.User.PersonalId)
+					? "Can't create user"
+					: $"Can't create user with personalId {createStudentRequest.User.PersonalId}";
+				
 				// TODO: Test error with long name (>30)
-				throw await CreatePostException(response, "Student", createStudentRequest.User.Email);
+				var result = await GetResult<VendorStudent>(response, errorMessage);
+				return result;
 			}
 		}
 		
@@ -131,11 +117,10 @@ namespace JAG.Learnster.APIClient.Clients
 				var url = $"vendor/{_learnsterOptions.VendorId}/users/students/{updateStudentRequest.StudentId}/";
 				var response = await client.PutAsJsonAsync(url, updateStudentRequest);
 
-				if (response.IsSuccessStatusCode)
-					return await response.DeserializeContent<VendorStudent>();
-				
 				// TODO: Test error with long name (>30)
-				throw await CreatePutException(response, "Student", updateStudentRequest.User.Email);
+				var result = await GetResult<VendorStudent>(response,
+					$"Can't update student {updateStudentRequest.StudentId}");
+				return result;
 			}
 		}
 
@@ -151,10 +136,7 @@ namespace JAG.Learnster.APIClient.Clients
 				var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/";
 				var response = await client.DeleteAsync(requestUri);
 
-				if (response.IsSuccessStatusCode)
-					return;
-
-				throw await CreateDeleteException(response, "Student", studentId);
+				await GetActionResult(response, $"Can't deactivate student {studentId}");
 			}
 		}
 		
@@ -165,7 +147,7 @@ namespace JAG.Learnster.APIClient.Clients
 			_logger.LogDebug("Deactivate Learnster student with id {LearnsterId}", studentId);
 #endif
 
-			return ChangeActiveStatus(studentId, false);
+			return ChangeActiveStatus(studentId, false, $"Can't deactivate student {studentId}");
 		}
 
 		/// <inheritdoc />
@@ -175,26 +157,23 @@ namespace JAG.Learnster.APIClient.Clients
 			_logger.LogDebug("Deactivate Learnster student with id {LearnsterId}", studentId);
 #endif
 
-			return ChangeActiveStatus(studentId, true);
+			return ChangeActiveStatus(studentId, true, $"Can't activate student {studentId}");
 		}
 
-		private async Task<VendorStudent> ChangeActiveStatus(Guid studentId, bool isActive)
+		private async Task<VendorStudent> ChangeActiveStatus(Guid studentId, bool isActive, string errorMessage)
 		{
 			if (studentId == default)
-				throw new ArgumentException(nameof(studentId));
+				throw new ArgumentException("StudentId cannot be empty", nameof(studentId));
 
 			using (var client = await _httpClientFactory.CreateAuthorizedClient())
 			{
-				var deactivateModel = new ActivateStatusRequest(isActive);
-				var request = CreateRequestContent(deactivateModel);
+				var deactivateModel = JsonContent.Create(new ActivateStatusRequest(isActive));
 
 				var url = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/";
-				var response = await client.PatchAsync(url, request);
+				var response = await client.PatchAsync(url, deactivateModel);
 
-				if (response.IsSuccessStatusCode)
-					return await response.DeserializeContent<VendorStudent>();
-
-				throw await CreatePutException(response, "Student", studentId);
+				var result = await GetResult<VendorStudent>(response, errorMessage);
+				return result;
 			}
 		}
 	}

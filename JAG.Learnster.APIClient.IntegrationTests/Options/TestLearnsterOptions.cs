@@ -15,6 +15,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Options
         public Guid TeamId { get; set; }
         public string TeamName { get; set; }
         public Guid TeamForUpdatingGuid { get; set; }
+        public Guid PersonalId { get; set; }
     }
     
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using JAG.Learnster.APIClient.Models.ApiContracts;
 using JetBrains.Annotations;
 
 namespace JAG.Learnster.APIClient.Models.Requests.Student

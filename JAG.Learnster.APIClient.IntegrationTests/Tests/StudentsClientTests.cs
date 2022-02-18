@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using JAG.Learnster.APIClient.Interfaces;
-using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests.Student;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -128,7 +127,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 		public async Task GetStudentByPersonalId_UserIsExist_ReturnStudent()
 		{
 			// Arrange
-			var personalId = new Guid("000887b8-4f96-4c86-8519-493ac755c975");
+			var personalId = TestLearnsterOptions.PersonalId;
 			
 			// Act
 			var student = await _client.GetStudentByPersonalId(personalId.ToString());

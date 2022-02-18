@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Interfaces;
 using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
@@ -35,59 +34,49 @@ namespace JAG.Learnster.APIClient.Clients
         /// <inheritdoc/>
         public async Task<IReadOnlyCollection<Team>> GetAll()
         {
+#if DEBUG
+            _logger.LogDebug("Getting team list from Learnster");
+#endif
+            
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-#if DEBUG
-                _logger.LogDebug("Getting team list from Learnster");
-#endif
-
                 var response = await client.GetAsync($"vendor/{_learnsterOptions.VendorId}/teams/");
-
-                if (response.IsSuccessStatusCode)
-                    return await response
-                        .DeserializeContent<ResponseList<Team>>()
-                        .ContinueWith(x => x.Result.Results);
-
-                throw await ThrowGetException(response, "Team list");
+                
+                var result = await GetResult<ResponseList<Team>>(response, "Can't get team list");
+                return result.Results;
             }
         }
         
         /// <inheritdoc/>
         public async Task<Team> GetTeam(Guid teamId)
         {
+#if DEBUG
+            _logger.LogDebug("Getting team by Id from Learnster");
+#endif
+            
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-#if DEBUG
-                _logger.LogDebug("Getting team by Id from Learnster");
-#endif
-
                 var response = await client.GetAsync($"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/");
-
-                if (response.IsSuccessStatusCode)
-                    return await response.DeserializeContent<Team>();
-
-                throw await ThrowGetException(response, "Team");
+                
+                var result = await GetResult<Team>(response, $"Can't get team by id {teamId}");
+                return result;
             }
         }
         
         /// <inheritdoc/>
         public async Task<IReadOnlyCollection<Team>> SearchTeamByName(string name)
         {
-            using (var client = await _httpClientFactory.CreateAuthorizedClient())
-            {
 #if DEBUG
-                _logger.LogDebug("Search teams from Learnster");
+            _logger.LogDebug("Search teams from Learnster");
 #endif
 
+            using (var client = await _httpClientFactory.CreateAuthorizedClient())
+            {
                 var url = $"vendor/{_learnsterOptions.VendorId}/teams/?name={name}";
                 var response = await client.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                    return await response
-                        .DeserializeContent<ResponseList<Team>>()
-                        .ContinueWith(x => x.Result.Results);
-
-                throw await ThrowGetException(response, "Search team");
+                
+                var result = await GetResult<ResponseList<Team>>(response, $"Can't get team list by name {name}");
+                return result.Results;
             }
         }
         
@@ -105,37 +94,33 @@ namespace JAG.Learnster.APIClient.Clients
         /// <inheritdoc/>
         public async Task<Team> CreateTeam(CreateTeamRequest createTeamRequest)
         {
-            using (var client = await _httpClientFactory.CreateAuthorizedClient())
-            {
 #if DEBUG
-                _logger.LogDebug("Creating Learnster team");
+            _logger.LogDebug("Creating Learnster team");
 #endif
 
+            using (var client = await _httpClientFactory.CreateAuthorizedClient())
+            {
                 var url = $"vendor/{_learnsterOptions.VendorId}/teams/";
                 var response = await client.PostAsJsonAsync(url, createTeamRequest);
 
-                if (response.IsSuccessStatusCode)
-                    return await response.DeserializeContent<Team>();
-
-                throw await CreatePostException(response, "Create team");
+                var result = await GetResult<Team>(response, $"Can't create team {createTeamRequest.Name}");
+                return result;
             }
         }
 
         /// <inheritdoc/>
         public async Task DeleteTeam(Guid teamId)
         {
+#if DEBUG
+            _logger.LogDebug("Deleting learnster team");
+#endif
+
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-#if DEBUG
-                _logger.LogDebug("Deleting learnster team");
-#endif
                 var url = $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/";
                 var response = await client.DeleteAsync(url);
 
-                if (response.IsSuccessStatusCode)
-                    return;
-
-                throw await CreateDeleteException(response, "Team");
+                await GetActionResult(response, $"Can't delete team {teamId}");
             }
         }
 
@@ -158,10 +143,9 @@ namespace JAG.Learnster.APIClient.Clients
                 var url = $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/add-member/";
                 var response = await client.PutAsJsonAsync(url, addMemberRequest);
 
-                if (response.IsSuccessStatusCode)
-                    return await response.DeserializeContent<AddTeamMemberResult>();
-
-                throw await CreatePutException(response, "Create team");
+                var result = await GetResult<AddTeamMemberResult>(
+                    response, $"Can't add member {studentId} to team {teamId}");
+                return result;
             }
         }
 
@@ -182,19 +166,19 @@ namespace JAG.Learnster.APIClient.Clients
                 var url = $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/remove-member/";
                 var response = await client.PutAsJsonAsync(url, addMemberRequest);
 
-                if (response.IsSuccessStatusCode)
-                    return await response.DeserializeContent<RemoveTeamMemberResult>();
-
-                throw await CreatePostException(response, "Create team");
+                var result = await GetResult<RemoveTeamMemberResult>(
+                    response, $"Can't remove member {studentId} from team {teamId}");
+                return result;
             }
         }
-        
-        
+
+        /// <inheritdoc/>
         public Task<IReadOnlyCollection<VendorStudent>> GetMembers(Guid teamId)
         {
             return GetTeamParticipants(teamId, false);
         }
         
+        /// <inheritdoc/>
         public Task<IReadOnlyCollection<VendorStudent>> GetManagers(Guid teamId)
         {
             return GetTeamParticipants(teamId, true);
@@ -210,21 +194,16 @@ namespace JAG.Learnster.APIClient.Clients
 
                 var requestUrl = isAdmin
                         ? $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/managers/"
-                        : $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/"
-                    ;
+                        : $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/";
                 var response = await client.GetAsync(requestUrl);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return await response
-                        .DeserializeContent<ResponseList<VendorStudent>>()
-                        .ContinueWith(x => x.Result.Results);
-                }
-                
-                throw await ThrowGetException(response, "Member of team");
+                var result = await GetResult<ResponseList<VendorStudent>>(
+                    response, $"Can't get participants for team {teamId}");
+                return result.Results;
             }
         }
 
+        /// <inheritdoc/>
         public async Task RemoveMembers(Guid teamId, IReadOnlyCollection<Guid> studentIds)
         {
             if (studentIds == null || studentIds.Count == 0)
@@ -245,15 +224,11 @@ namespace JAG.Learnster.APIClient.Clients
                 var requestUrl = $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/bulk/players/";
                 var response = await client.PostAsJsonAsync(requestUrl, requestBody);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return;
-                }
-                
-                throw await ThrowGetException(response, "Member of team");
+                await GetActionResult(response, $"Can't remove members for team {teamId}");
             }
         }
         
+        /// <inheritdoc/>
         public async Task RemoveManagers(Guid teamId, IReadOnlyCollection<Guid> managerIds)
         {
             if (managerIds == null || managerIds.Count == 0)
@@ -274,15 +249,11 @@ namespace JAG.Learnster.APIClient.Clients
                 var requestUrl = $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/bulk/managers/";
                 var response = await client.PostAsJsonAsync(requestUrl, requestBody);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return;
-                }
-                
-                throw await ThrowGetException(response, "Member of team");
+                await GetActionResult(response, $"Can't remove managers for team {teamId}");
             }
         }
         
+        /// <inheritdoc/>
         public async Task<IReadOnlyCollection<TeamMinimal>> GetTeamsByStudent(Guid studentId)
         {
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
@@ -294,14 +265,9 @@ namespace JAG.Learnster.APIClient.Clients
                 var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/teams/";
                 var response = await client.GetAsync(requestUrl);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return await response
-                        .DeserializeContent<ResponseList<TeamMinimal>>()
-                        .ContinueWith(x => x.Result.Results);
-                }
-                
-                throw await ThrowGetException(response, "Teams for member");
+                var result = await GetResult<ResponseList<TeamMinimal>>(
+                    response, $"Can't get teams for student {studentId}");
+                return result.Results;
             }
         }
     }
