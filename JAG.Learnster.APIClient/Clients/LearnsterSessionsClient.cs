@@ -18,9 +18,6 @@ namespace JAG.Learnster.APIClient.Clients
         private readonly LearnsterOptions _learnsterOptions;
         private readonly ILearnsterHttpClientFactory _httpClientFactory;
 
-        /// <summary>
-        /// 
-        /// </summary>
         public LearnsterSessionsClient(ILogger<LearnsterSessionsClient> logger,
                                        IOptions<LearnsterOptions> learnsterOptions,
                                        ILearnsterHttpClientFactory httpClientFactory)

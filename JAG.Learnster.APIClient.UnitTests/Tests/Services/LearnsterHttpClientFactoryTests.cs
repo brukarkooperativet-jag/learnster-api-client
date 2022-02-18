@@ -98,7 +98,8 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Services
         public async Task CreateAuthorizedClient_AnUpdateBusy_ThrowTimeoutException()
         {
             // Arrange
-            var eventTimeoutField = typeof(LearnsterHttpClientFactory).GetField("EventTimeout", BindingFlags.NonPublic | BindingFlags.Static);
+            var eventTimeoutField = typeof(LearnsterHttpClientFactory)
+                .GetField("EventTimeout", BindingFlags.NonPublic | BindingFlags.Static)!;
             eventTimeoutField.SetValue(null, 1);
 
             SetupAutoResetEvent(false);
@@ -110,15 +111,15 @@ namespace JAG.Learnster.APIClient.UnitTests.Tests.Services
         private void SetCachedToken(LearnsterToken learnsterToken)
         {
             var field = typeof(LearnsterHttpClientFactory)
-                .GetField("_cachedToken", BindingFlags.NonPublic | BindingFlags.Static);
+                .GetField("_cachedToken", BindingFlags.NonPublic | BindingFlags.Static)!;
             field.SetValue(null, learnsterToken);
         }
 
         private void SetupAutoResetEvent(bool isReleased)
         {
             var autoResetEventField = typeof(LearnsterHttpClientFactory)
-                .GetField("AutoResetEvent", BindingFlags.NonPublic | BindingFlags.Static);
-            var autoResetEvent = (AutoResetEvent) autoResetEventField.GetValue(null);
+                .GetField("AutoResetEvent", BindingFlags.NonPublic | BindingFlags.Static)!;
+            var autoResetEvent = (AutoResetEvent) autoResetEventField.GetValue(null)!;
             autoResetEvent.WaitOne(1);
 
             if (isReleased)

@@ -9,7 +9,6 @@ using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests.Student;
 using JAG.Learnster.APIClient.Options;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -21,10 +20,7 @@ namespace JAG.Learnster.APIClient.Clients
 		private readonly LearnsterOptions _learnsterOptions;
 		private readonly ILogger<LearnsterStudentsClient> _logger;
 		private readonly ILearnsterHttpClientFactory _httpClientFactory;
-		
-		/// <summary>
-		/// 
-		/// </summary>
+
 		public LearnsterStudentsClient(IOptions<LearnsterOptions> learnsterOptions,
 		                               ILogger<LearnsterStudentsClient> logger,
 		                               ILearnsterHttpClientFactory httpClientFactory)

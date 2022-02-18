@@ -16,28 +16,30 @@ namespace JAG.Learnster.APIClient.UnitTests.Helpers
                                               HttpStatusCode httpStatusCode,
                                               TResult resultObject)
         {
-            handlerMock.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(() => new HttpResponseMessage()
-                {
-                    StatusCode = httpStatusCode,
-                    Content = new StringContent(JsonSerializer.Serialize(resultObject))
-                });
+            handlerMock.SetupSendAsync(new HttpResponseMessage()
+            {
+                StatusCode = httpStatusCode,
+                Content = new StringContent(JsonSerializer.Serialize(resultObject))
+            });
         }
 
         public static void SetupSendWithEmptyResponse(this Mock<HttpClientHandler> handlerMock,
                                                       HttpStatusCode httpStatusCode)
         {
+            handlerMock.SetupSendAsync(new HttpResponseMessage()
+            {
+                StatusCode = httpStatusCode
+            });
+        }
+
+        private static void SetupSendAsync(this Mock<HttpClientHandler> handlerMock,
+                                           HttpResponseMessage response)
+        {
             handlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",
                     ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(() => new HttpResponseMessage()
-                {
-                    StatusCode = httpStatusCode
-                });
+                .ReturnsAsync(() => response);
         }
 
         public static Mock<IHttpClientFactory> CreateHttpClientFactoryMock(Mock<HttpClientHandler> handlerMock)
@@ -45,10 +47,7 @@ namespace JAG.Learnster.APIClient.UnitTests.Helpers
             var factoryMock = new Mock<IHttpClientFactory>();
             factoryMock
                 .Setup(x => x.CreateClient(It.IsAny<string>()))
-                .Returns(() => new HttpClient(handlerMock.Object)
-                {
-                    BaseAddress = new Uri("https://someTestAddress.test/")
-                });
+                .Returns(() => CreatedHttpClient(handlerMock.Object));
 
             return factoryMock;
         }
@@ -58,12 +57,15 @@ namespace JAG.Learnster.APIClient.UnitTests.Helpers
             var factoryMock = new Mock<ILearnsterHttpClientFactory>();
             factoryMock
                 .Setup(x => x.CreateAuthorizedClient())
-                .ReturnsAsync(() => new HttpClient(handlerMock.Object)
-                {
-                    BaseAddress = new Uri("https://someTestAddress.test/")
-                });
+                .ReturnsAsync(() => CreatedHttpClient(handlerMock.Object));
 
             return factoryMock;
         }
+
+        private static HttpClient CreatedHttpClient(HttpClientHandler handler)
+            => new(handler)
+            {
+                BaseAddress = new Uri("https://someTestAddress.test/")
+            };
     }
 }

@@ -17,9 +17,6 @@ namespace JAG.Learnster.APIClient.Clients
 	{
 		private readonly ILogger<BaseClient> _logger;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		protected BaseClient(ILogger<BaseClient> logger)
 		{
 			_logger = logger;

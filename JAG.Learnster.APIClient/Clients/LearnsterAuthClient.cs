@@ -12,16 +12,13 @@ using Microsoft.Extensions.Options;
 
 namespace JAG.Learnster.APIClient.Clients
 {
-	/// <inheritdoc />
+	/// <inheritdoc cref="JAG.Learnster.APIClient.Interfaces.ILearnsterAuthClient" />
 	public class LearnsterAuthClient : BaseClient, ILearnsterAuthClient
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly LearnsterOptions _learnsterOptions;
 		private readonly ILogger<LearnsterAuthClient> _logger;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public LearnsterAuthClient(IHttpClientFactory httpClientFactory,
 		                           IOptions<LearnsterOptions> learnsterOptions,
 		                           ILogger<LearnsterAuthClient> logger)

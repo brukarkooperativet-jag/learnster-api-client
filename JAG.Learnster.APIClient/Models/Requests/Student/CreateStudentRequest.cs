@@ -28,6 +28,5 @@ namespace JAG.Learnster.APIClient.Models.Requests.Student
         /// </summary>
         [JsonPropertyName("controlled_by_integration")]
         public bool ControlledByIntegration { get; set; } = true;
-
     }
 }
