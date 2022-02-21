@@ -11,19 +11,23 @@ pool:
 
 steps:
 - task: DotNetCoreCLI@2
+  displayName: 'Dotnet Restore'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
     feedsToUse: 'select'
 - task: DotNetCoreCLI@2
+  displayName: 'Dotnet Build'
   inputs:
     command: 'build'
     projects: '**/*.csproj'
 - task: DotNetCoreCLI@2
+  displayName: 'Dotnet Test'
   inputs:
     command: 'test'
     projects: '**/*.csproj'
 - task: DotNetCoreCLI@2
+  displayName: 'Dotnet pack'
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj'
