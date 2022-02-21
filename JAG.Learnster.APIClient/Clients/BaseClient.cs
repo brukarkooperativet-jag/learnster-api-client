@@ -1,10 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
-using JAG.Learnster.APIClient.Constants;
 using JAG.Learnster.APIClient.Exceptions;
 using JAG.Learnster.APIClient.Extensions;
 using JAG.Learnster.APIClient.Models;
@@ -86,6 +84,41 @@ namespace JAG.Learnster.APIClient.Clients
 			}
 			
 			throw exceptionFunc($"{errorMessage} ({response.StatusCode}).");
+		}
+
+		private const int DefaultBulkSize = 100;
+		
+		/// <summary>
+		/// Get all items from API
+		/// </summary>
+		/// <returns></returns>
+		protected async Task<IReadOnlyCollection<T>> GetAllItems<T>(Func<int, int, Task<ResponseList<T>>> getBulkFunc)
+		{
+			var items = new List<T>(255);
+
+			var pageNumber = 1;
+			while (true)
+			{
+				var responseList = await getBulkFunc(pageNumber, DefaultBulkSize);
+				items.AddRange(responseList.Results);
+
+				if (responseList.Next == null)
+					break;
+
+				pageNumber++;
+			}
+
+			return items;
+		}
+
+		// TODO: [REFACTORING] Use some query constructor instead?
+		/// <summary>
+		/// Pagination query string
+		/// </summary>
+		/// <returns></returns>
+		protected string GetPaginationQuery(int page, int count)
+		{
+			return $"page={page}&page_size={count}";
 		}
 	}
 }

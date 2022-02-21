@@ -32,18 +32,29 @@ namespace JAG.Learnster.APIClient.Clients
         }
 
         /// <inheritdoc/>
-        public async Task<IReadOnlyCollection<Team>> GetAll()
+        public Task<IReadOnlyCollection<Team>> GetAll()
         {
 #if DEBUG
             _logger.LogDebug("Getting team list from Learnster");
 #endif
+
+            return GetAllItems(Get);
+        }
+        
+        /// <inheritdoc/>
+        public async Task<ResponseList<Team>> Get(int page, int count)
+        {
+#if DEBUG
+            _logger.LogDebug($"Getting {count} teams on {page} page from Learnster");
+#endif
             
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-                var response = await client.GetAsync($"vendor/{_learnsterOptions.VendorId}/teams/");
+                var url = $"vendor/{_learnsterOptions.VendorId}/teams/?{GetPaginationQuery(page, count)}";
+                var response = await client.GetAsync(url);
                 
                 var result = await GetResult<ResponseList<Team>>(response, "Can't get team list");
-                return result.Results;
+                return result;
             }
         }
         
@@ -175,46 +186,49 @@ namespace JAG.Learnster.APIClient.Clients
         /// <inheritdoc/>
         public Task<IReadOnlyCollection<VendorStudent>> GetMembers(Guid teamId)
         {
-            return GetTeamParticipants(teamId, false);
+#if DEBUG
+            _logger.LogDebug($"Getting members from Learnster for team {teamId}");
+#endif
+
+            return GetAllItems((page, count) => GetTeamParticipants(page, count, teamId, false));
         }
         
         /// <inheritdoc/>
         public Task<IReadOnlyCollection<VendorStudent>> GetManagers(Guid teamId)
         {
-            return GetTeamParticipants(teamId, true);
+#if DEBUG
+            _logger.LogDebug($"Getting managers from Learnster for team {teamId}");
+#endif
+
+            return GetAllItems((page, count) => GetTeamParticipants(page, count, teamId, true));
         }
 
-        private async Task<IReadOnlyCollection<VendorStudent>> GetTeamParticipants(Guid teamId, bool isAdmin)
+        private async Task<ResponseList<VendorStudent>> GetTeamParticipants(int page, int count, Guid teamId, bool isManager)
         {
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-#if DEBUG
-                _logger.LogDebug("Getting participants from Learnster by TeamId");
-#endif
-
-                var requestUrl = isAdmin
-                        ? $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/managers/"
-                        : $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/";
+                var requestUrl = isManager
+                        ? $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/managers/?{GetPaginationQuery(page, count)}"
+                        : $"vendor/{_learnsterOptions.VendorId}/teams/{teamId}/members/?{GetPaginationQuery(page, count)}";
                 var response = await client.GetAsync(requestUrl);
 
-                var result = await GetResult<ResponseList<VendorStudent>>(
+                return await GetResult<ResponseList<VendorStudent>>(
                     response, $"Can't get participants for team {teamId}");
-                return result.Results;
             }
         }
 
         /// <inheritdoc/>
         public async Task RemoveMembers(Guid teamId, IReadOnlyCollection<Guid> studentIds)
         {
+#if DEBUG
+            _logger.LogDebug("Deleting members from Learnster");
+#endif
+            
             if (studentIds == null || studentIds.Count == 0)
                 return;
             
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-#if DEBUG
-                _logger.LogDebug("Deleting members from Learnster");
-#endif
-
                 // TODO: Check bulk length, 100 Max
                 var requestBody = new TeamMembersBulk()
                 {
@@ -254,20 +268,29 @@ namespace JAG.Learnster.APIClient.Clients
         }
         
         /// <inheritdoc/>
-        public async Task<IReadOnlyCollection<TeamMinimal>> GetTeamsByStudent(Guid studentId)
+        public Task<IReadOnlyCollection<TeamMinimal>> GetTeamsByStudent(Guid studentId)
         {
+#if DEBUG
+            _logger.LogDebug($"Getting teams for student {studentId}");
+#endif
+
+            return GetAllItems((page, count) => GetTeamsByStudent(page, count, studentId));
+        }
+        
+        public async Task<ResponseList<TeamMinimal>> GetTeamsByStudent(int page, int count, Guid studentId)
+        {
+#if DEBUG
+            _logger.LogDebug($"Getting teams for student {studentId}");
+#endif
+            
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-#if DEBUG
-                _logger.LogDebug("Deleting managers from Learnster");
-#endif
 
                 var requestUrl = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/teams/";
                 var response = await client.GetAsync(requestUrl);
 
-                var result = await GetResult<ResponseList<TeamMinimal>>(
+                return await GetResult<ResponseList<TeamMinimal>>(
                     response, $"Can't get teams for student {studentId}");
-                return result.Results;
             }
         }
     }

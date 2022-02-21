@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using JAG.Learnster.APIClient.Exceptions;
+using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests.Student;
 using JetBrains.Annotations;
@@ -20,6 +21,14 @@ namespace JAG.Learnster.APIClient.Interfaces
         /// <exception cref="LearnsterException">Throw when can't get students from the service</exception>
         Task<IReadOnlyCollection<VendorStudent>> GetAll();
 
+        /// <summary>
+        /// Get list of students
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="count">Max 100</param>
+        /// <returns></returns>
+        Task<ResponseList<VendorStudent>> Get(int page, int count);
+        
         /// <summary>
         /// Get student by email or identifier 
         /// </summary>

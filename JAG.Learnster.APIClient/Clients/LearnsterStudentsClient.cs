@@ -31,18 +31,29 @@ namespace JAG.Learnster.APIClient.Clients
 		}
 
 		/// <inheritdoc />
-		public async Task<IReadOnlyCollection<VendorStudent>> GetAll()
+		public Task<IReadOnlyCollection<VendorStudent>> GetAll()
 		{
-			using (var client = await _httpClientFactory.CreateAuthorizedClient())
-			{
 #if DEBUG
-				_logger.LogDebug("Getting student list from Learnster");
+			_logger.LogDebug("Getting student list from Learnster");
 #endif
 
-				var response = await client.GetAsync($"vendor/{_learnsterOptions.VendorId}/users/students/");
+			return GetAllItems(Get);
+		}
+		
+		/// <inheritdoc />
+		public async Task<ResponseList<VendorStudent>> Get(int page, int count)
+		{
+#if DEBUG
+			_logger.LogDebug($"Getting {count} students on {page} page from Learnster");
+#endif
+			
+			using (var client = await _httpClientFactory.CreateAuthorizedClient())
+			{
+				var url = $"vendor/{_learnsterOptions.VendorId}/users/students/?{GetPaginationQuery(page, count)}";
+				var response = await client.GetAsync(url);
 
 				var result = await GetResult<ResponseList<VendorStudent>>(response, "Can't get student list");
-				return result.Results;
+				return result;
 			}
 		}
 

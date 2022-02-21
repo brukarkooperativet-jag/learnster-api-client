@@ -28,83 +28,105 @@ namespace JAG.Learnster.APIClient.Clients
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<SessionShortWithAvatar>> GetAll()
+        public Task<IReadOnlyCollection<SessionShortWithAvatar>> GetAll()
         {
 #if DEBUG
             _logger.LogDebug("Getting list of sessions");
 #endif
-            
+
+            return GetAllItems(Get);
+        }
+        
+        /// <inheritdoc />
+        public async Task<ResponseList<SessionShortWithAvatar>> Get(int page, int count)
+        {
+#if DEBUG
+            _logger.LogDebug($"Getting {count} sessions on {page} page from Learnster");
+#endif
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-                var requestUri = $"vendor/{_learnsterOptions.VendorId}/sessions/";
+                var requestUri = $"vendor/{_learnsterOptions.VendorId}/sessions/?{GetPaginationQuery(page, count)}";
                 var response = await client.GetAsync(requestUri);
 
                 var result = await GetResult<ResponseList<SessionShortWithAvatar>>(
                     response, "Can't get session list");
-                
-                return result.Results;
+                return result;
             }
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<PossibleChoicesSession>> GetAvailableForStudent(Guid studentId, bool? isCatalog = null)
+        public Task<IReadOnlyCollection<PossibleChoicesSession>> GetAvailableForStudent(Guid studentId, bool? isCatalog = null)
         {
 #if DEBUG
             _logger.LogDebug($"Getting session list for student {studentId}", studentId);
 #endif
-            
+
+            return GetAllItems((page, count) => GetAvailableForStudent(page, count, studentId, isCatalog));
+        }
+
+        private async Task<ResponseList<PossibleChoicesSession>> GetAvailableForStudent(
+            int page,
+            int count,
+            Guid studentId,
+            bool? isCatalog = null)
+        {
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-                var requestUri =
-                    $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/sessions/possible-choices/";
+                var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/" +
+                                 $"sessions/possible-choices/?{GetPaginationQuery(page, count)}";
 
                 if (isCatalog.HasValue)
-                    requestUri += $"?catalog={isCatalog}";
+                    requestUri += $"&catalog={isCatalog}";
 
                 var response = await client.GetAsync(requestUri);
 
-                var result = await GetResult<ResponseList<PossibleChoicesSession>>(
+                return await GetResult<ResponseList<PossibleChoicesSession>>(
                     response, $"Can't get available sessions for student {studentId}");
-                
-                return result.Results;
             }
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<SessionParticipant>> GetStudentSessions(Guid studentId)
+        public Task<IReadOnlyCollection<SessionParticipant>> GetStudentSessions(Guid studentId)
         {
 #if DEBUG
             _logger.LogDebug($"Getting session list for student {studentId}", studentId);
 #endif
-            
+            return GetAllItems((page, count) => GetStudentSessions(page, count, studentId));
+        }
+        
+        private async Task<ResponseList<SessionParticipant>> GetStudentSessions(int page, int count, Guid studentId)
+        {
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-                var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/sessions/";
+                var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/" +
+                                 $"students/{studentId}/sessions/?{GetPaginationQuery(page, count)}";
                 var response = await client.GetAsync(requestUri);
 
-                var result = await GetResult<ResponseList<SessionParticipant>>(
+                return await GetResult<ResponseList<SessionParticipant>>(
                     response, $"Can't get student sessions for student {studentId}");
-                
-                return result.Results;
             }
         }
         
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<StudentHistory>> GetStudentSessionsHistory(Guid studentId)
+        public Task<IReadOnlyCollection<StudentHistory>> GetStudentSessionsHistory(Guid studentId)
         {
 #if DEBUG
             _logger.LogDebug($"Getting session list for student {studentId}", studentId);
 #endif
-            
+
+            return GetAllItems((page, count) => GetStudentSessionsHistory(page, count, studentId));
+        }
+        
+        private async Task<ResponseList<StudentHistory>> GetStudentSessionsHistory(int page, int count, Guid studentId)
+        {
             using (var client = await _httpClientFactory.CreateAuthorizedClient())
             {
-                var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/history/";
+                var requestUri = $"vendor/{_learnsterOptions.VendorId}/users/students/{studentId}/" +
+                                 $"history/?{GetPaginationQuery(page, count)}";
                 var response = await client.GetAsync(requestUri);
 
-                var result = await GetResult<ResponseList<StudentHistory>>(
+                return await GetResult<ResponseList<StudentHistory>>(
                     response, $"Can't get student session history for student {studentId}");
-                
-                return result.Results;
             }
         }
     }
