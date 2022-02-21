@@ -34,7 +34,7 @@ namespace JAG.Learnster.APIClient.IntegrationTests.Tests
 			return new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json")
 				.AddEnvironmentVariables()
-				.AddUserSecrets(Assembly.GetCallingAssembly())
+				// .AddUserSecrets(Assembly.GetCallingAssembly())
 				.Build();
 		}
 	}
