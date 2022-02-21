@@ -19,11 +19,13 @@ namespace JAG.Learnster.APIClient.Models
 		/// <summary>
 		/// Next bulk of results
 		/// </summary>
+		[JsonPropertyName("next")]
 		public Uri Next { get; set; }
 
 		/// <summary>
 		/// Previous bulk of results
 		/// </summary>
+		[JsonPropertyName("previous")]
 		public Uri Previous { get; set; }
 
 		/// <summary>

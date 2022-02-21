@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using JAG.Learnster.APIClient.Models;
 using JAG.Learnster.APIClient.Models.ApiContracts;
 using JAG.Learnster.APIClient.Models.Requests.Team;
 
@@ -14,6 +15,13 @@ namespace JAG.Learnster.APIClient.Interfaces
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         Task<IReadOnlyCollection<Team>> GetAll();
+
+        /// <summary>
+        /// Get list of teams
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        Task<ResponseList<Team>> Get(int page, int count);
 
         /// <summary>
         /// Get team from learnster by Guid
